@@ -1,0 +1,8 @@
+{
+  "name": "Electronics Marketplace V1.0.1.8",
+  "description": "Modern dedicated marketplace for genuine electronics with comprehensive client shopping experience and full-featured admin inventory \u0026 POS portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

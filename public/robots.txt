@@ -1,0 +1,29 @@
+# Robots.txt for Genuine Electronics Trust
+# Website: https://genuine-electronics.com
+
+User-agent: *
+Allow: /
+Allow: /product/
+Allow: /category/
+Disallow: /api/
+Disallow: /admin
+Disallow: /static/
+
+User-agent: Googlebot
+Allow: /
+Allow: /product/
+Allow: /category/
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+Allow: /product/
+Allow: /category/
+Disallow: /api/
+Disallow: /admin
+
+# Canonical XML Sitemap for Search Engines
+Sitemap: https://genuine-electronics.com/sitemap.xml
+Host: genuine-electronics.com

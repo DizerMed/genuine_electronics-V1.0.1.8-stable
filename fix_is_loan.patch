@@ -1,0 +1,29 @@
+--- src/components/AdminPortal.tsx
++++ src/components/AdminPortal.tsx
+@@ -3817,7 +3817,8 @@
+       customerTin: posCustomerTin.trim() || undefined,
+       tenderedAmount: posEffectiveTendered > 0 ? posEffectiveTendered : undefined,
+       changeAmount: posChangeAmount > 0 ? posChangeAmount : undefined,
+-      isLoan: Boolean(
++
++      isLoan: (() => { const check = Boolean(
+         (!isSplitPaymentMode && (
+           (posPaymentMethod || '').toLowerCase().includes('loan') || 
+           (posPaymentMethod || '').toLowerCase().includes('credit') || 
+@@ -3829,14 +3830,16 @@
+         posLoanNationalId ||
+         posLoanGuarantorName ||
+         (posLoanDownPayment > 0 && posTotal > posLoanDownPayment)
+-      ) ? true : undefined,
+-      downPayment: posLoanDownPayment > 0 ? posLoanDownPayment : undefined,
+-      loanBalance: Math.max(0, posTotal - posLoanDownPayment) > 0 ? Math.max(0, posTotal - posLoanDownPayment) : 0,
+-      loanDueDate: posLoanDueDate || (
++      ); return check ? true : undefined; })(),
++      downPayment: (() => { const check = Boolean((!isSplitPaymentMode && ((posPaymentMethod || '').toLowerCase().includes('loan') || (posPaymentMethod || '').toLowerCase().includes('credit') || (posPaymentMethod || '').toLowerCase().includes('mkopo') || (posPaymentMethod || '').toLowerCase().includes('debt') || (posPaymentMethod || '').toLowerCase().includes('deni'))) || posLoanDueDate || posLoanNationalId || posLoanGuarantorName || (posLoanDownPayment > 0 && posTotal > posLoanDownPayment)); return check ? (posLoanDownPayment > 0 ? posLoanDownPayment : undefined) : undefined; })(),
++      
++      loanBalance: (() => { const check = Boolean((!isSplitPaymentMode && ((posPaymentMethod || '').toLowerCase().includes('loan') || (posPaymentMethod || '').toLowerCase().includes('credit') || (posPaymentMethod || '').toLowerCase().includes('mkopo') || (posPaymentMethod || '').toLowerCase().includes('debt') || (posPaymentMethod || '').toLowerCase().includes('deni'))) || posLoanDueDate || posLoanNationalId || posLoanGuarantorName || (posLoanDownPayment > 0 && posTotal > posLoanDownPayment)); return check ? (Math.max(0, posTotal - posLoanDownPayment) > 0 ? Math.max(0, posTotal - posLoanDownPayment) : 0) : undefined; })(),
++
++      loanDueDate: (() => { const check = Boolean((!isSplitPaymentMode && ((posPaymentMethod || '').toLowerCase().includes('loan') || (posPaymentMethod || '').toLowerCase().includes('credit') || (posPaymentMethod || '').toLowerCase().includes('mkopo') || (posPaymentMethod || '').toLowerCase().includes('debt') || (posPaymentMethod || '').toLowerCase().includes('deni'))) || posLoanDueDate || posLoanNationalId || posLoanGuarantorName || (posLoanDownPayment > 0 && posTotal > posLoanDownPayment)); return check ? (posLoanDueDate || (
+         Boolean(
+           (!isSplitPaymentMode && (
+             (posPaymentMethod || '').toLowerCase().includes('loan') || 

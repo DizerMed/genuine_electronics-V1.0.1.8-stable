@@ -1,0 +1,272 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide all top-level elements that do NOT contain a printable document */
+  #root > *:not(:has(.printable-invoice-root)):not(:has(.printable-receipt-root)) {
+    display: none !important;
+  }
+
+  /* Reset fixed modal overlay wrappers containing printable invoice */
+  div:has(.printable-invoice-root),
+  div:has(.printable-receipt-root),
+  section:has(.printable-invoice-root) {
+    position: static !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    transform: none !important;
+  }
+
+  /* Hide non-printable elements by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Completely exclude no-print elements from layout */
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  /* Make printable invoice root strictly visible and cleanly pinned */
+  .printable-invoice-root,
+  .printable-invoice-root * {
+    visibility: visible !important;
+  }
+
+  .printable-invoice-root {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Authentic Blue Ink Stamp in Print / PDF / Color Printers */
+  .printable-invoice-root .official-stamp,
+  .printable-invoice-root .official-stamp * {
+    color: #0033a0 !important;
+    border-color: #0033a0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Table and multi-page page-break rules */
+  table {
+    page-break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tr, .keep-together {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+
+/* Custom Scrollbars for dark/light mode */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+  }
+  50% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.7));
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+.hover-lift:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* WhatsApp 5-second Heartbeat & Pulse Wave Animations */
+@keyframes whatsappHeartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.18);
+  }
+  16% {
+    transform: scale(1);
+  }
+  24% {
+    transform: scale(1.14);
+  }
+  36% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes whatsappWave {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  28% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+
+.animate-whatsapp-heartbeat {
+  animation: whatsappHeartbeat 5s ease-in-out infinite;
+}
+
+.animate-whatsapp-wave {
+  animation: whatsappWave 5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+
+

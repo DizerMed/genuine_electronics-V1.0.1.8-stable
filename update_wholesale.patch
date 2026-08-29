@@ -1,0 +1,22 @@
+--- src/components/AdminPortal.tsx
++++ src/components/AdminPortal.tsx
+@@ -3426,6 +3426,8 @@
+           price: formPrice,
+ 
+           costPrice: formCostPrice,
+ 
+           originalPrice: formOriginalPrice > 0 ? formOriginalPrice : 0,
++
++          wholesalePrice: formWholesalePrice > 0 ? formWholesalePrice : 0,
+ 
+           discountPrice: formOriginalPrice > formPrice ? formPrice : 0,
+@@ -3482,6 +3484,8 @@
+           price: formPrice,
+ 
+           costPrice: formCostPrice,
+ 
+           originalPrice: formOriginalPrice > 0 ? formOriginalPrice : 0,
++
++          wholesalePrice: formWholesalePrice > 0 ? formWholesalePrice : 0,
+ 
+           discountPrice: formOriginalPrice > formPrice ? formPrice : 0,

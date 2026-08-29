@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(function(reg) {
+              console.log('[PWA] Service Worker registered with root scope:', reg.scope);
+              // Check for updates
+              reg.onupdatefound = function() {
+                const installingWorker = reg.installing;
+                if (installingWorker) {
+                  installingWorker.onstatechange = function() {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      console.log('[PWA] New version available. Refresh to update.');
+                    }
+                  };
+                }
+              };
+            })
+            .catch(function(err) {
+              console.warn('[PWA] Service Worker registration failed:', err);
+            });
+        });
+      }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Genuine Electronics Trust" />
+    <meta name="application-name" content="Genuine Electronics Trust" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-TileImage" content="/icon-192.png" />
+    
+    <!-- Search Engine Indexing & Robots Directives for Global Discovery -->
+    <title>Genuine Electronics Trust | Online Shopping Center Tanzania</title>
+    <meta name="description" content="Tanzania's authorized online shopping center for 100% genuine electronics, smart tech, TVs, smartphones, laptops & appliances with official manufacturer warranty & same-day delivery." />
+    <meta name="keywords" content="genuine electronics tanzania, bei ya tv tanzania, smart tv dar es salaam, nunua simu tanzania, laptops dar es salaam, appliances kariakoo, online shopping tanzania" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://genuine-electronics.com/" />
+
+    <!-- PWA Web Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Browser Favicons & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph & Social Sharing Card -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Genuine Electronics Trust" />
+    <meta property="og:title" content="Genuine Electronics Trust | Online Shopping Center Tanzania" />
+    <meta property="og:description" content="Tanzania's authorized online shopping center for 100% genuine electronics, smart tech, TVs & appliances with official manufacturer warranty & same-day delivery." />
+    <meta property="og:url" content="https://genuine-electronics.com/" />
+    <meta property="og:image" content="https://ukwkseawcdwbpsjnwrut.supabase.co/storage/v1/object/public/genuine_electronics/Genuine%20Electronics%203D%2002.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Genuine Electronics Trust Brand Logo" />
+    <meta property="og:locale" content="en_TZ" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Genuine Electronics Trust | Online Shopping Center Tanzania" />
+    <meta name="twitter:description" content="Tanzania's authorized online shopping center for 100% genuine electronics, smart tech, TVs & appliances with official manufacturer warranty & same-day delivery." />
+    <meta name="twitter:image" content="https://ukwkseawcdwbpsjnwrut.supabase.co/storage/v1/object/public/genuine_electronics/Genuine%20Electronics%203D%2002.png" />
+
+    <!-- Base Schema.org Structured Data for Google Indexing -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ElectronicsStore",
+          "@id": "https://genuine-electronics.com/#organization",
+          "name": "Genuine Electronics Trust",
+          "url": "https://genuine-electronics.com/",
+          "logo": "https://ukwkseawcdwbpsjnwrut.supabase.co/storage/v1/object/public/genuine_electronics/Genuine%20Electronics%203D%2002.png",
+          "image": "https://ukwkseawcdwbpsjnwrut.supabase.co/storage/v1/object/public/genuine_electronics/Genuine%20Electronics%203D%2002.png",
+          "description": "Tanzania's authorized online shopping center for 100% genuine electronics, smart tech, TVs & appliances with official manufacturer warranty & same-day delivery.",
+          "telephone": "+255 768 929 203",
+          "email": "sales@genuine-electronics.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Kariakoo / Ndanda na Masasi Street",
+            "addressLocality": "Dar es Salaam",
+            "addressRegion": "Dar es Salaam",
+            "postalCode": "11105",
+            "addressCountry": "TZ"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-6.8197",
+            "longitude": "39.2783"
+          },
+          "priceRange": "TZS",
+          "currenciesAccepted": "TZS",
+          "paymentAccepted": "Cash, Credit Card, Bank Transfer, M-Pesa, Airtel Money, Mixx By Yas, Orbi Pay"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://genuine-electronics.com/#website",
+          "url": "https://genuine-electronics.com/",
+          "name": "Genuine Electronics Trust",
+          "publisher": {
+            "@id": "https://genuine-electronics.com/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://genuine-electronics.com/?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-blue-600 selection:text-white">
+    <div id="root">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f8fafc; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <img 
+          src="https://ukwkseawcdwbpsjnwrut.supabase.co/storage/v1/object/public/genuine_electronics/Genuine%20Electronics%203D%2002.png" 
+          alt="Genuine Electronics Trust" 
+          style="height: 64px; width: auto; max-width: 180px; object-fit: contain; margin-bottom: 24px;"
+        />
+        <div style="width: 42px; height: 42px; border: 3px solid rgba(37, 99, 235, 0.2); border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        <p style="margin-top: 18px; color: #64748b; font-size: 13px; font-weight: 600; letter-spacing: 0.05em;" id="loading-text">Loading Genuine Electronics Trust Shopping Center...</p>
+        <style>
+          @keyframes spin { to { transform: rotate(360deg); } }
+        </style>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="/src/main.tsx"></script>
+  </body>
+</html>
+
