@@ -1,13 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  ShieldCheck, CheckCircle2, QrCode, FileText, Printer, Download, 
-  Share2, Store, Phone, Calendar, ArrowLeft, RefreshCw, X, Award, Check, Stamp
-} from 'lucide-react';
-import { toPng, toCanvas } from 'html-to-image';
-import { jsPDF } from 'jspdf';
-import { QRCodeSVG } from 'qrcode.react';
-import { formatTZS, formatToGMT3, StoreSettings, BRAND_LOGO_URL, POSTransaction } from '../types';
-import { parseReceiptQueryParams, fetchOnlineReceiptVerification, buildReceiptVerificationUrl } from '../services/receiptQrService';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  ShieldCheck,
+  CheckCircle2,
+  QrCode,
+  FileText,
+  Printer,
+  Download,
+  Share2,
+  Store,
+  Phone,
+  Calendar,
+  ArrowLeft,
+  RefreshCw,
+  X,
+  Award,
+  Check,
+  Stamp,
+} from "lucide-react";
+import { toPng, toCanvas } from "html-to-image";
+import { jsPDF } from "jspdf";
+import { QRCodeSVG } from "qrcode.react";
+import {
+  formatTZS,
+  formatToGMT3,
+  StoreSettings,
+  BRAND_LOGO_URL,
+  POSTransaction,
+} from "../types";
+import {
+  parseReceiptQueryParams,
+  fetchOnlineReceiptVerification,
+  buildReceiptVerificationUrl,
+} from "../services/receiptQrService";
 
 interface ReceiptVerificationModalProps {
   isOpen: boolean;
@@ -17,26 +41,29 @@ interface ReceiptVerificationModalProps {
   storeSettings?: StoreSettings;
 }
 
-export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> = ({
+export const ReceiptVerificationModal: React.FC<
+  ReceiptVerificationModalProps
+> = ({
   isOpen,
   onClose,
   orderNo: propOrderNo,
   receiptNo: propReceiptNo,
-  storeSettings
+  storeSettings,
 }) => {
   const [loading, setLoading] = useState(true);
   const [verificationResult, setVerificationResult] = useState<any>(null);
   const [copiedLink, setCopiedLink] = useState(false);
-  
-  const [paperWidth, setPaperWidth] = useState<'80mm' | '58mm'>('80mm');
-  const [receiptLang, setReceiptLang] = useState<'sw' | 'en' | 'bi'>('sw');
+
+  const [paperWidth, setPaperWidth] = useState<"80mm" | "58mm">("80mm");
+  const [receiptLang, setReceiptLang] = useState<"sw" | "en" | "bi">("sw");
   const [isDownloading, setIsDownloading] = useState(false);
 
   const receiptRef = useRef<HTMLDivElement>(null);
 
   const queryParams = parseReceiptQueryParams();
   const activeOrderNo = propOrderNo || queryParams.orderNo;
-  const activeReceiptNo = propReceiptNo || queryParams.receiptNo || activeOrderNo;
+  const activeReceiptNo =
+    propReceiptNo || queryParams.receiptNo || activeOrderNo;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,8 +78,8 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
       }
 
       const res = await fetchOnlineReceiptVerification(
-        activeOrderNo || 'GEN-ORDER',
-        activeReceiptNo || 'GEN-RCT'
+        activeOrderNo || "GEN-ORDER",
+        activeReceiptNo || "GEN-RCT",
       );
 
       if (isMounted) {
@@ -75,41 +102,54 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
   const isVerified = verificationResult?.isVerified !== false;
 
   // Language helpers
-  const isSwahili = receiptLang === 'sw';
-  const isBilingual = receiptLang === 'bi';
+  const isSwahili = receiptLang === "sw";
+  const isBilingual = receiptLang === "bi";
 
   // Format soft copy transaction
-  const receiptId = rawReceipt?.receiptNo || rawReceipt?.id || activeReceiptNo || 'RCT-0000';
+  const receiptId =
+    rawReceipt?.receiptNo || rawReceipt?.id || activeReceiptNo || "RCT-0000";
   const createdAt = rawReceipt?.createdAt || new Date().toISOString();
-  const cashierName = rawReceipt?.cashierName || 'Genuine Electronics Staff';
-  const paymentMethod = rawReceipt?.paymentMethod || 'Cash / Mobile';
-  const customerName = rawReceipt?.customerName || 'Valued Customer';
-  const customerPhone = rawReceipt?.customerPhone || '';
-  const customerTin = rawReceipt?.customerTin || '';
-  
-  const items: any[] = Array.isArray(rawReceipt?.items) && rawReceipt.items.length > 0 
-    ? rawReceipt.items 
-    : [
-        { 
-          product: { name: 'Genuine Electronic Item / Purchase Order' },
-          quantity: 1, 
-          price: rawReceipt?.totalAmount || rawReceipt?.total || queryParams.total || 0 
-        }
-      ];
+  const cashierName = rawReceipt?.cashierName || "Genuine Electronics Staff";
+  const paymentMethod = rawReceipt?.paymentMethod || "Cash / Mobile";
+  const customerName = rawReceipt?.customerName || "Valued Customer";
+  const customerPhone = rawReceipt?.customerPhone || "";
+  const customerTin = rawReceipt?.customerTin || "";
 
-  const subtotal = rawReceipt?.subtotal || items.reduce((sum, item) => sum + ((item.price || item.product?.price || 0) * (item.quantity || 1)), 0);
+  const items: any[] =
+    Array.isArray(rawReceipt?.items) && rawReceipt.items.length > 0
+      ? rawReceipt.items
+      : [
+          {
+            product: { name: "Genuine Electronic Item / Purchase Order" },
+            quantity: 1,
+            price:
+              rawReceipt?.totalAmount ||
+              rawReceipt?.total ||
+              queryParams.total ||
+              0,
+          },
+        ];
+
+  const subtotal =
+    rawReceipt?.subtotal ||
+    items.reduce(
+      (sum, item) =>
+        sum + (item.price || item.product?.price || 0) * (item.quantity || 1),
+      0,
+    );
   const discount = rawReceipt?.discount || 0;
-  const grandTotal = rawReceipt?.totalAmount || rawReceipt?.total || subtotal - discount;
+  const grandTotal =
+    rawReceipt?.totalAmount || rawReceipt?.total || subtotal - discount;
   const extraCosts: any[] = rawReceipt?.extraCosts || [];
   const tenderedAmount = rawReceipt?.tenderedAmount || 0;
   const changeAmount = rawReceipt?.changeAmount || 0;
 
   // Tax calculation
   const vatRate = 0.18;
-  const taxAmount = Math.round(grandTotal - (grandTotal / (1 + vatRate)));
+  const taxAmount = Math.round(grandTotal - grandTotal / (1 + vatRate));
 
   const handleCopyLink = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2500);
@@ -117,14 +157,15 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
   };
 
   const handleShareWhatsApp = () => {
-    const text = ` OFFICIAL SOFT COPY RECEIPT - Genuine Electronics Tanzania\n` +
+    const text =
+      ` OFFICIAL SOFT COPY RECEIPT - Genuine Electronics Tanzania\n` +
       ` Order No: ${rawReceipt?.orderNo || activeOrderNo}\n` +
       ` Receipt No: ${receiptId}\n` +
       ` Customer: ${customerName}\n` +
       ` Total Paid: ${formatTZS(grandTotal)}\n` +
       ` Status: AUTHENTIC VERIFIED ONLINE\n` +
       ` View soft copy receipt: ${window.location.href}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handlePrint = () => {
@@ -137,15 +178,15 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
       setIsDownloading(true);
       const canvas = await toCanvas(receiptRef.current, {
         pixelRatio: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
       });
-      const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `Receipt_${receiptId.replace(/[^a-zA-Z0-9]/g, '_')}_SoftCopy.png`;
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `Receipt_${receiptId.replace(/[^a-zA-Z0-9]/g, "_")}_SoftCopy.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error('Failed to capture receipt image:', err);
+      console.error("Failed to capture receipt image:", err);
     } finally {
       setIsDownloading(false);
     }
@@ -157,18 +198,27 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
       setIsDownloading(true);
       const canvas = await toCanvas(receiptRef.current, {
         pixelRatio: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
       });
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: [80, 200]
+        orientation: "portrait",
+        unit: "mm",
+        format: [80, 200],
       });
-      pdf.addImage(imgData, 'PNG', 0, 0, 80, (canvas.height * 80) / canvas.width);
-      pdf.save(`Receipt_${receiptId.replace(/[^a-zA-Z0-9]/g, '_')}_SoftCopy.pdf`);
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        80,
+        (canvas.height * 80) / canvas.width,
+      );
+      pdf.save(
+        `Receipt_${receiptId.replace(/[^a-zA-Z0-9]/g, "_")}_SoftCopy.pdf`,
+      );
     } catch (err) {
-      console.error('Failed to generate PDF:', err);
+      console.error("Failed to generate PDF:", err);
     } finally {
       setIsDownloading(false);
     }
@@ -176,7 +226,6 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-
       {/* Dedicated Printer-Friendly CSS for exact receipt alignment and stamp positioning */}
       <style>{`
         @media print {
@@ -221,7 +270,7 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             left: 50% !important;
             top: 0 !important;
             transform: translateX(-50%) !important;
-            width: ${paperWidth === '58mm' ? '58mm' : '80mm'} !important;
+            width: ${paperWidth === "58mm" ? "58mm" : "80mm"} !important;
             max-width: 100% !important;
             margin: 0 auto !important;
             padding: 5mm !important;
@@ -229,7 +278,7 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             color: #000000 !important;
             font-family: 'Courier Prime', Consolas, 'Courier New', 'Roboto Mono', monospace !important;
             font-weight: 700 !important;
-            font-size: ${paperWidth === '58mm' ? '10px' : '12px'} !important;
+            font-size: ${paperWidth === "58mm" ? "10px" : "12px"} !important;
             line-height: 1.2 !important;
             box-shadow: none !important;
             border: none !important;
@@ -242,7 +291,6 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
       `}</style>
 
       <div className="w-full max-w-xl bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col my-auto max-h-[96vh]">
-        
         {/* Header Control Banner */}
         <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-emerald-950 p-4 sm:p-5 text-white border-b border-slate-800 relative">
           <button
@@ -272,17 +320,21 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             {/* Paper Size Selector */}
             <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
               <button
-                onClick={() => setPaperWidth('80mm')}
+                onClick={() => setPaperWidth("80mm")}
                 className={`px-2.5 py-1 rounded-lg font-black text-[10px] transition-all cursor-pointer ${
-                  paperWidth === '80mm' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                  paperWidth === "80mm"
+                    ? "bg-indigo-600 text-white shadow"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 80mm
               </button>
               <button
-                onClick={() => setPaperWidth('58mm')}
+                onClick={() => setPaperWidth("58mm")}
                 className={`px-2.5 py-1 rounded-lg font-black text-[10px] transition-all cursor-pointer ${
-                  paperWidth === '58mm' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                  paperWidth === "58mm"
+                    ? "bg-indigo-600 text-white shadow"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 58mm
@@ -292,31 +344,36 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             {/* Language Selector */}
             <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
               <button
-                onClick={() => setReceiptLang('sw')}
+                onClick={() => setReceiptLang("sw")}
                 className={`px-2.5 py-1 rounded-lg font-black text-[10px] transition-all cursor-pointer ${
-                  receiptLang === 'sw' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                  receiptLang === "sw"
+                    ? "bg-emerald-600 text-white shadow"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 SWA
               </button>
               <button
-                onClick={() => setReceiptLang('en')}
+                onClick={() => setReceiptLang("en")}
                 className={`px-2.5 py-1 rounded-lg font-black text-[10px] transition-all cursor-pointer ${
-                  receiptLang === 'en' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                  receiptLang === "en"
+                    ? "bg-emerald-600 text-white shadow"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 ENG
               </button>
               <button
-                onClick={() => setReceiptLang('bi')}
+                onClick={() => setReceiptLang("bi")}
                 className={`px-2.5 py-1 rounded-lg font-black text-[10px] transition-all cursor-pointer ${
-                  receiptLang === 'bi' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                  receiptLang === "bi"
+                    ? "bg-emerald-600 text-white shadow"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 BI
               </button>
             </div>
-
           </div>
         </div>
 
@@ -326,82 +383,126 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             <div className="py-20 text-center space-y-3">
               <RefreshCw className="w-10 h-10 text-emerald-400 animate-spin mx-auto" />
               <p className="text-xs font-extrabold text-slate-300">
-                Retrieving official soft copy receipt from Genuine Electronics records...
+                Retrieving official soft copy receipt from Genuine Electronics
+                records...
               </p>
             </div>
           ) : (
             /* Authentic High-Contrast Thermal Receipt Paper (Identical to physical printout) */
-            <div 
+            <div
               ref={receiptRef}
               className={`printable-receipt-root font-mono leading-tight bg-white text-black p-4 sm:p-5 shadow-2xl border-0 transition-all ${
-                paperWidth === '58mm' ? 'w-full max-w-[280px] text-[10.5px]' : 'w-full max-w-[360px] text-[11.5px]'
+                paperWidth === "58mm"
+                  ? "w-full max-w-[280px] text-[10.5px]"
+                  : "w-full max-w-[360px] text-[11.5px]"
               }`}
-              style={{ 
-                backgroundColor: '#ffffff',
-                color: '#000000',
-                fontFamily: "'Courier Prime', Consolas, 'Courier New', 'Roboto Mono', 'SF Mono', Monaco, monospace",
+              style={{
+                backgroundColor: "#ffffff",
+                color: "#000000",
+                fontFamily:
+                  "'Courier Prime', Consolas, 'Courier New', 'Roboto Mono', 'SF Mono', Monaco, monospace",
                 fontWeight: 700,
-                textRendering: 'optimizeLegibility',
-                WebkitFontSmoothing: 'antialiased',
-                borderRadius: '0px',
-                border: 'none'
+                textRendering: "optimizeLegibility",
+                WebkitFontSmoothing: "antialiased",
+                borderRadius: "0px",
+                border: "none",
               }}
             >
               {/* Header / Store Info */}
               <div className="text-center space-y-1 pb-2 border-b-2 border-black">
                 <div className="flex items-center justify-center mx-auto mb-1">
-                  <img 
-                    src={BRAND_LOGO_URL} 
-                    alt={store?.storeName || "Genuine Electronics"} 
-                    className="h-8 w-auto max-w-[130px] object-contain filter grayscale contrast-200" 
-                    referrerPolicy="no-referrer" 
+                  <img
+                    src={BRAND_LOGO_URL}
+                    alt={store?.storeName || "Genuine Electronics"}
+                    className="h-8 w-auto max-w-[130px] object-contain filter grayscale contrast-200"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <h2 className="font-black text-sm sm:text-base tracking-normal uppercase text-black">
-                  {store?.storeName || 'GENUINE ELECTRONICS'}
+                  {store?.storeName || "GENUINE ELECTRONICS"}
                 </h2>
                 <div className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black py-0.5">
-                  {isSwahili ? 'RISITI RASMI YA MAUZO' : isBilingual ? 'RISITI YA MAUZO / OFFICIAL CASH RECEIPT' : 'OFFICIAL SALES RECEIPT'}
+                  {isSwahili
+                    ? "RISITI RASMI YA MAUZO"
+                    : isBilingual
+                      ? "RISITI YA MAUZO / OFFICIAL CASH RECEIPT"
+                      : "OFFICIAL SALES RECEIPT"}
                 </div>
                 <p className="text-[10px] text-black font-extrabold leading-tight">
-                  {store?.address || 'Kariakoo, Dar es Salaam Tanzania'}
+                  {store?.address || "Kariakoo, Dar es Salaam Tanzania"}
                 </p>
                 <p className="text-[10px] text-black font-black">
-                  TEL: {store?.phone || '+255 768 929 203'}
+                  TEL: {store?.phone || "+255 768 929 203"}
                 </p>
                 <div className="text-[9.5px] font-black text-black border-t border-b border-black py-0.5 mt-1 tracking-wide">
-                  <span>TIN: {store?.tin || '104-982-371'}</span>
+                  <span>TIN: {store?.tin || "104-982-371"}</span>
                   <span className="mx-1.5 font-black">|</span>
-                  </div>
+                </div>
               </div>
 
               {/* Transaction Metadata & Buyer Info */}
               <div className="space-y-1 py-2 border-b-2 border-dashed border-black text-[10.5px] text-black font-bold">
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'NAMBA YA RISITI:' : isBilingual ? 'NAMBA YA RISITI / RECEIPT NO:' : 'RECEIPT NO:'}</span>
+                  <span>
+                    {isSwahili
+                      ? "NAMBA YA RISITI:"
+                      : isBilingual
+                        ? "NAMBA YA RISITI / RECEIPT NO:"
+                        : "RECEIPT NO:"}
+                  </span>
                   <span className="font-black tracking-tight">{receiptId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'TAREHE NA MUDA:' : isBilingual ? 'TAREHE / DATE & TIME:' : 'DATE / TIME:'}</span>
+                  <span>
+                    {isSwahili
+                      ? "TAREHE NA MUDA:"
+                      : isBilingual
+                        ? "TAREHE / DATE & TIME:"
+                        : "DATE / TIME:"}
+                  </span>
                   <span className="font-black">{formatToGMT3(createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'MUUZAJI:' : isBilingual ? 'MUUZAJI / CASHIER:' : 'CASHIER:'}</span>
+                  <span>
+                    {isSwahili
+                      ? "MUUZAJI:"
+                      : isBilingual
+                        ? "MUUZAJI / CASHIER:"
+                        : "CASHIER:"}
+                  </span>
                   <span className="font-black">{cashierName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'NJIA YA MALIPO:' : isBilingual ? 'NJIA YA MALIPO / PAYMENT:' : 'PAYMENT METHOD:'}</span>
+                  <span>
+                    {isSwahili
+                      ? "NJIA YA MALIPO:"
+                      : isBilingual
+                        ? "NJIA YA MALIPO / PAYMENT:"
+                        : "PAYMENT METHOD:"}
+                  </span>
                   <span className="font-black uppercase">{paymentMethod}</span>
                 </div>
                 <div className="flex justify-between items-start pt-1 border-t border-black text-black gap-1">
-                  <span className="font-black shrink-0">{isSwahili ? 'MTEJA:' : isBilingual ? 'MTEJA / CUSTOMER:' : 'CUSTOMER / BUYER:'}</span>
+                  <span className="font-black shrink-0">
+                    {isSwahili
+                      ? "MTEJA:"
+                      : isBilingual
+                        ? "MTEJA / CUSTOMER:"
+                        : "CUSTOMER / BUYER:"}
+                  </span>
                   <span className="font-black text-right break-words max-w-[200px]">
                     {customerName}
                   </span>
                 </div>
                 {customerPhone && (
                   <div className="flex justify-between items-start gap-1">
-                    <span className="font-black shrink-0">{isSwahili ? 'SIMU YA MTEJA:' : isBilingual ? 'SIMU / PHONE:' : 'PHONE:'}</span>
+                    <span className="font-black shrink-0">
+                      {isSwahili
+                        ? "SIMU YA MTEJA:"
+                        : isBilingual
+                          ? "SIMU / PHONE:"
+                          : "PHONE:"}
+                    </span>
                     <span className="font-black text-right break-words max-w-[200px]">
                       {customerPhone}
                     </span>
@@ -409,7 +510,13 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
                 )}
                 {customerTin && (
                   <div className="flex justify-between items-start gap-1">
-                    <span className="font-black shrink-0">{isSwahili ? 'TIN YA MTEJA:' : isBilingual ? 'TIN YA MTEJA / BUYER TIN:' : 'BUYER TIN:'}</span>
+                    <span className="font-black shrink-0">
+                      {isSwahili
+                        ? "TIN YA MTEJA:"
+                        : isBilingual
+                          ? "TIN YA MTEJA / BUYER TIN:"
+                          : "BUYER TIN:"}
+                    </span>
                     <span className="font-black text-right break-words max-w-[200px]">
                       {customerTin}
                     </span>
@@ -420,27 +527,49 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
               {/* Line Items Table */}
               <div className="py-2 border-b-2 border-dashed border-black space-y-1.5">
                 <div className="flex justify-between font-black text-[10.5px] text-black border-b-2 border-black pb-0.5 uppercase tracking-wide">
-                  <span>{isSwahili ? 'MAELEZO YA BIDHAA' : isBilingual ? 'BIDHAA / ITEM' : 'ITEM DESCRIPTION'}</span>
-                  <span>{isSwahili ? 'KIASI (TZS)' : isBilingual ? 'KIASI / AMOUNT' : 'AMOUNT (TZS)'}</span>
+                  <span>
+                    {isSwahili
+                      ? "MAELEZO YA BIDHAA"
+                      : isBilingual
+                        ? "BIDHAA / ITEM"
+                        : "ITEM DESCRIPTION"}
+                  </span>
+                  <span>
+                    {isSwahili
+                      ? "KIASI (TZS)"
+                      : isBilingual
+                        ? "KIASI / AMOUNT"
+                        : "AMOUNT (TZS)"}
+                  </span>
                 </div>
                 {items.map((item, idx) => {
-                  const name = item.name || item.productName || item.product?.name || 'Electronic Item';
+                  const name =
+                    item.name ||
+                    item.productName ||
+                    item.product?.name ||
+                    "Electronic Item";
                   const qty = item.quantity || item.qty || 1;
-                  const price = item.price || item.unitPrice || item.product?.price || 0;
+                  const price =
+                    item.price || item.unitPrice || item.product?.price || 0;
                   const total = qty * price;
 
                   return (
-                    <div key={idx} className="space-y-0.5 border-b border-dotted border-black/30 pb-1 last:border-b-0">
+                    <div
+                      key={idx}
+                      className="space-y-0.5 border-b border-dotted border-black/30 pb-1 last:border-b-0"
+                    >
                       <div className="text-[11px] text-black font-black leading-snug">
                         {idx + 1}. {name}
                       </div>
                       {item.serialNumbers && item.serialNumbers.length > 0 && (
                         <div className="text-[9.5px] text-black font-black tracking-tight pl-2">
-                          S/N: {item.serialNumbers.join(', ')}
+                          S/N: {item.serialNumbers.join(", ")}
                         </div>
                       )}
                       <div className="flex justify-between text-[10.5px] text-black font-extrabold pl-2">
-                        <span>{qty} x {formatTZS(price)}</span>
+                        <span>
+                          {qty} x {formatTZS(price)}
+                        </span>
                         <span className="font-black">{formatTZS(total)}</span>
                       </div>
                     </div>
@@ -451,17 +580,37 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
               {/* Totals Breakdown */}
               <div className="py-2 border-b-2 border-dashed border-black space-y-1 text-[10.5px] text-black font-bold">
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'JUMLA KABLA YA KODI:' : isBilingual ? 'JUMLA BILA KODI / NET SUBTOTAL:' : 'SUBTOTAL (NET):'}</span>
-                  <span className="font-black">{formatTZS(grandTotal - taxAmount)}</span>
+                  <span>
+                    {isSwahili
+                      ? "JUMLA KABLA YA KODI:"
+                      : isBilingual
+                        ? "JUMLA BILA KODI / NET SUBTOTAL:"
+                        : "SUBTOTAL (NET):"}
+                  </span>
+                  <span className="font-black">
+                    {formatTZS(grandTotal - taxAmount)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{isSwahili ? 'KODI YA VAT (18% INCL):' : isBilingual ? 'KODI YA VAT (18%) / VAT:' : 'VAT (18% INCL):'}</span>
+                  <span>
+                    {isSwahili
+                      ? "KODI YA VAT (18% INCL):"
+                      : isBilingual
+                        ? "KODI YA VAT (18%) / VAT:"
+                        : "VAT (18% INCL):"}
+                  </span>
                   <span className="font-black">{formatTZS(taxAmount)}</span>
                 </div>
 
                 {discount > 0 && (
                   <div className="flex justify-between font-black text-black">
-                    <span>{isSwahili ? 'PUNGUZO LA BEI:' : isBilingual ? 'PUNGUZO / DISCOUNT:' : 'DISCOUNT:'}</span>
+                    <span>
+                      {isSwahili
+                        ? "PUNGUZO LA BEI:"
+                        : isBilingual
+                          ? "PUNGUZO / DISCOUNT:"
+                          : "DISCOUNT:"}
+                    </span>
                     <span>-{formatTZS(discount)}</span>
                   </div>
                 )}
@@ -469,8 +618,22 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
                 {extraCosts.length > 0 && (
                   <div className="space-y-0.5 pt-0.5 border-t border-dashed border-black/40">
                     <div className="flex justify-between font-black text-black">
-                      <span>{isSwahili ? 'GHARAMA ZA ZIADA:' : isBilingual ? 'GHARAMA ZA ZIADA / EXTRA SERVICES:' : 'EXTRA COSTS:'}</span>
-                      <span>+{formatTZS(extraCosts.reduce((s: number, c: any) => s + (Number(c.amount) || 0), 0))}</span>
+                      <span>
+                        {isSwahili
+                          ? "GHARAMA ZA ZIADA:"
+                          : isBilingual
+                            ? "GHARAMA ZA ZIADA / EXTRA SERVICES:"
+                            : "EXTRA COSTS:"}
+                      </span>
+                      <span>
+                        +
+                        {formatTZS(
+                          extraCosts.reduce(
+                            (s: number, c: any) => s + (Number(c.amount) || 0),
+                            0,
+                          ),
+                        )}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -478,22 +641,44 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
                 {/* Grand Total Paid */}
                 <div className="flex justify-between items-center py-1.5 my-1 border-t-2 border-b-2 border-black text-black px-1">
                   <span className="font-black text-xs sm:text-sm">
-                    {isSwahili ? 'JUMLA KUU (TZS):' : isBilingual ? 'JUMLA KUU / TOTAL (TZS):' : 'TOTAL PAID (TZS):'}
+                    {isSwahili
+                      ? "JUMLA KUU (TZS):"
+                      : isBilingual
+                        ? "JUMLA KUU / TOTAL (TZS):"
+                        : "TOTAL PAID (TZS):"}
                   </span>
-                  <span className="text-sm sm:text-base font-black tracking-tight">{formatTZS(grandTotal)}</span>
+                  <span className="text-sm sm:text-base font-black tracking-tight">
+                    {formatTZS(grandTotal)}
+                  </span>
                 </div>
 
                 {tenderedAmount > 0 && (
                   <div className="flex justify-between pt-0.5">
-                    <span>{isSwahili ? 'PESA ILIYOTOLEWA:' : isBilingual ? 'PESA ILIYOTOLEWA / CASH TENDERED:' : 'CASH TENDERED:'}</span>
-                    <span className="font-black">{formatTZS(tenderedAmount)}</span>
+                    <span>
+                      {isSwahili
+                        ? "PESA ILIYOTOLEWA:"
+                        : isBilingual
+                          ? "PESA ILIYOTOLEWA / CASH TENDERED:"
+                          : "CASH TENDERED:"}
+                    </span>
+                    <span className="font-black">
+                      {formatTZS(tenderedAmount)}
+                    </span>
                   </div>
                 )}
 
                 {changeAmount > 0 && (
                   <div className="flex justify-between font-black pt-0.5">
-                    <span>{isSwahili ? 'CHENJI ILIYORUDISHWA:' : isBilingual ? 'CHENJI / CHANGE DUE:' : 'CHANGE DUE:'}</span>
-                    <span className="font-black">{formatTZS(changeAmount)}</span>
+                    <span>
+                      {isSwahili
+                        ? "CHENJI ILIYORUDISHWA:"
+                        : isBilingual
+                          ? "CHENJI / CHANGE DUE:"
+                          : "CHANGE DUE:"}
+                    </span>
+                    <span className="font-black">
+                      {formatTZS(changeAmount)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -502,12 +687,19 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
               {true && (
                 <div className="py-2.5 border-b-2 border-dashed border-black flex justify-center">
                   <div className="official-stamp border-2 border-dashed border-[#0033a0] text-[#0033a0] bg-blue-50/80 p-2 px-4 text-center rounded-lg rotate-[-1.5deg] shadow-sm select-none">
-                    <p className="text-[9px] font-black tracking-widest uppercase">★ {store?.storeName || 'GENUINE ELECTRONICS'} ★</p>
+                    <p className="text-[9px] font-black tracking-widest uppercase">
+                      ★ {store?.storeName || "GENUINE ELECTRONICS"} ★
+                    </p>
                     <p className="text-[10.5px] font-black uppercase tracking-wider my-0.5">
-                      {isSwahili ? 'IMELIPWA KIKAMILIFU' : isBilingual ? 'IMELIPWA / PAID' : 'OFFICIAL STAMP • PAID'}
+                      {isSwahili
+                        ? "IMELIPWA KIKAMILIFU"
+                        : isBilingual
+                          ? "IMELIPWA / PAID"
+                          : "OFFICIAL STAMP • PAID"}
                     </p>
                     <p className="text-[8.5px] font-mono font-black">
-                      TAREHE: {formatToGMT3(createdAt).split(',')[0]} • VERIFIED ONLINE
+                      TAREHE: {formatToGMT3(createdAt).split(",")[0]} • VERIFIED
+                      ONLINE
                     </p>
                   </div>
                 </div>
@@ -517,13 +709,13 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
               <div className="text-center space-y-1.5 pt-2">
                 <div className="flex justify-center">
                   <div className="p-1 bg-white border border-black/30 inline-block rounded-none">
-                    <QRCodeSVG 
+                    <QRCodeSVG
                       value={buildReceiptVerificationUrl({
                         orderNo: activeOrderNo || receiptId,
                         receiptNo: receiptId,
-                        totalAmount: grandTotal
-                      })} 
-                      size={paperWidth === '58mm' ? 68 : 80} 
+                        totalAmount: grandTotal,
+                      })}
+                      size={paperWidth === "58mm" ? 68 : 80}
                       level="M"
                       fgColor="#000000"
                       bgColor="#ffffff"
@@ -532,23 +724,40 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
                 </div>
                 <div className="space-y-0.5 text-black font-black">
                   <p className="text-[10px] font-black uppercase tracking-wide text-black">
-                    {isSwahili ? 'UTHIBITISHO WA RISITI ONLINE' : isBilingual ? 'UTHIBITISHO WA RISITI / ONLINE VERIFIED' : 'ONLINE VERIFIED SOFT COPY'}
+                    {isSwahili
+                      ? "UTHIBITISHO WA RISITI ONLINE"
+                      : isBilingual
+                        ? "UTHIBITISHO WA RISITI / ONLINE VERIFIED"
+                        : "ONLINE VERIFIED SOFT COPY"}
                   </p>
                   <p className="text-[9.5px] font-mono font-black text-black">
                     SIGNATURE: {receiptId.slice(-10).toUpperCase()}
                   </p>
                   <p className="text-[9.5px] pt-1 font-black text-black">
-                    {isSwahili ? 'Asante kwa kufanya biashara nasi!' : isBilingual ? 'Asante kwa Biashara / Thank You!' : 'Thank you for your business!'}
+                    {isSwahili
+                      ? "Asante kwa kufanya biashara nasi!"
+                      : isBilingual
+                        ? "Asante kwa Biashara / Thank You!"
+                        : "Thank you for your business!"}
                   </p>
                   <p className="text-[9px] font-extrabold text-black">
-                    {isSwahili ? 'Bidhaa zilizouzwa hazirudishwi baada ya siku 7 • Tunza risiti hii kwa ajili ya dhamana (warranty)' : isBilingual ? 'Hazirudishwi baada ya siku 7 • Keep receipt for warranty' : 'Goods non-refundable after 7 days • Keep receipt for warranty'}
+                    {isSwahili
+                      ? "Bidhaa zilizouzwa hazirudishwi baada ya siku 7 • Tunza risiti hii kwa ajili ya dhamana (warranty)"
+                      : isBilingual
+                        ? "Hazirudishwi baada ya siku 7 • Keep receipt for warranty"
+                        : "Goods non-refundable after 7 days • Keep receipt for warranty"}
                   </p>
                   <p className="text-[8.5px] font-black pt-0.5 text-black">
-                    *** {isSwahili ? 'MWISHO WA RISITI' : isBilingual ? 'MWISHO WA RISITI / END OF RECEIPT' : 'END OF RECEIPT'} ***
+                    ***{" "}
+                    {isSwahili
+                      ? "MWISHO WA RISITI"
+                      : isBilingual
+                        ? "MWISHO WA RISITI / END OF RECEIPT"
+                        : "END OF RECEIPT"}{" "}
+                    ***
                   </p>
                 </div>
               </div>
-
             </div>
           )}
         </div>
@@ -559,8 +768,12 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             onClick={handleCopyLink}
             className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
           >
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <QrCode className="w-4 h-4 text-indigo-400" />}
-            <span>{copiedLink ? 'Link Copied!' : 'Copy Link'}</span>
+            {copiedLink ? (
+              <Check className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <QrCode className="w-4 h-4 text-indigo-400" />
+            )}
+            <span>{copiedLink ? "Link Copied!" : "Copy Link"}</span>
           </button>
 
           <div className="flex flex-wrap gap-2">
@@ -598,7 +811,6 @@ export const ReceiptVerificationModal: React.FC<ReceiptVerificationModalProps> =
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

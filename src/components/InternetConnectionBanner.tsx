@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { WifiOff, Wifi, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { WifiOff, Wifi, AlertCircle } from "lucide-react";
 
 export const InternetConnectionBanner: React.FC = () => {
-  const [isOnline, setIsOnline] = useState<boolean>(() => 
-    typeof navigator !== 'undefined' ? navigator.onLine : true
+  const [isOnline, setIsOnline] = useState<boolean>(() =>
+    typeof navigator !== "undefined" ? navigator.onLine : true,
   );
   const [showRestoredNotice, setShowRestoredNotice] = useState<boolean>(false);
 
@@ -24,12 +24,12 @@ export const InternetConnectionBanner: React.FC = () => {
       setShowRestoredNotice(false);
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       if (timer) clearTimeout(timer);
     };
   }, []);
@@ -51,10 +51,13 @@ export const InternetConnectionBanner: React.FC = () => {
                 <span className="font-extrabold text-xs uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-md border border-white/20">
                   Offline Mode
                 </span>
-                <span className="text-xs font-bold truncate">No Internet Connection Detected</span>
+                <span className="text-xs font-bold truncate">
+                  No Internet Connection Detected
+                </span>
               </div>
               <p className="text-[11px] text-rose-100 font-medium truncate mt-0.5">
-                An active internet connection is required to process orders, save edits, and sync live data. Please reconnect.
+                An active internet connection is required to process orders,
+                save edits, and sync live data. Please reconnect.
               </p>
             </div>
           </div>
@@ -70,7 +73,9 @@ export const InternetConnectionBanner: React.FC = () => {
                 <span className="font-extrabold text-xs uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-md border border-white/20">
                   Online
                 </span>
-                <span className="text-xs font-bold">Internet Connection Restored</span>
+                <span className="text-xs font-bold">
+                  Internet Connection Restored
+                </span>
               </div>
               <p className="text-[11px] text-emerald-100 font-medium truncate mt-0.5">
                 Successfully reconnected to live store network and database.

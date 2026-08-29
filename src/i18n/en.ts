@@ -12,11 +12,12 @@ const en = {
     contact: "Contact",
     cart: "Cart",
     language: "Language",
-    profile: "Profile"
+    profile: "Profile",
   },
   shop: {
     heroTitle: "Premium Electronics & Smart Home",
-    heroSubtitle: "Shop the latest genuine gadgets with warranty and country-wide delivery.",
+    heroSubtitle:
+      "Shop the latest genuine gadgets with warranty and country-wide delivery.",
     shopNow: "Shop Now",
     viewDeals: "View Deals",
     freeShipping: "Free Delivery",
@@ -32,10 +33,10 @@ const en = {
     notifyMe: "Notify Me",
     contactSellerForEnquiry: "Contact Seller for Product Enquiry",
     addToCart: "Add to Cart",
-    outOfStock: "Out of Stock"
+    outOfStock: "Out of Stock",
   },
   categories: {
-    "All": "All",
+    All: "All",
     "Computers & Tablets": "Computers & Tablets",
     "Phones & Wearables": "Phones & Wearables",
     "Audio & Headphones": "Audio & Headphones",
@@ -49,23 +50,26 @@ const en = {
     "Air Conditioners & Cooling": "Air Conditioners & Cooling",
     "Refrigeration & Freezers": "Refrigeration & Freezers",
     "Kitchen Cooking & Ovens": "Kitchen Cooking & Ovens",
-    "Home Cleaning & Laundry": "Home Cleaning & Laundry"
+    "Home Cleaning & Laundry": "Home Cleaning & Laundry",
   },
   checkout: {
-    requiredFieldsError: "Please fill out all required shipping and contact details before proceeding."
+    requiredFieldsError:
+      "Please fill out all required shipping and contact details before proceeding.",
   },
   footer: {
     brandName: "GENUINE ELECTRONICS TRUST",
     brandSubtitle: "Online Shopping Center",
-    description: "Tanzania's authorized online shopping center for 100% genuine consumer and enterprise technology. Direct manufacturer warranties, verified original quality, and fast Dar es Salaam delivery & pickup.",
+    description:
+      "Tanzania's authorized online shopping center for 100% genuine consumer and enterprise technology. Direct manufacturer warranties, verified original quality, and fast Dar es Salaam delivery & pickup.",
     topCategories: "Top Categories",
     customerCare: "Customer Care",
     visitContact: "Visit & Contact",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     authenticityGuarantee: "Authenticity Guarantee",
-    copyright: "© 2026 Genuine Electronics Trust Tanzania Ltd. All rights reserved. • Authorized Online Shopping Center"
-  }
+    copyright:
+      "© 2026 Genuine Electronics Trust Tanzania Ltd. All rights reserved. • Authorized Online Shopping Center",
+  },
 };
 
 export default en;

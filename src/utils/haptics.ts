@@ -1,27 +1,30 @@
 /**
  * Haptic & Tactile Micro-feedback utility for mobile and touch interactions
  */
-export function triggerHaptic(type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error' = 'light') {
-  if (typeof navigator === 'undefined' || !navigator.vibrate) return;
+export function triggerHaptic(
+  type:
+    "light" | "medium" | "heavy" | "success" | "warning" | "error" = "light",
+) {
+  if (typeof navigator === "undefined" || !navigator.vibrate) return;
 
   try {
     switch (type) {
-      case 'light':
+      case "light":
         navigator.vibrate(15);
         break;
-      case 'medium':
+      case "medium":
         navigator.vibrate(30);
         break;
-      case 'heavy':
+      case "heavy":
         navigator.vibrate(50);
         break;
-      case 'success':
+      case "success":
         navigator.vibrate([20, 50, 30]);
         break;
-      case 'warning':
+      case "warning":
         navigator.vibrate([30, 40, 30]);
         break;
-      case 'error':
+      case "error":
         navigator.vibrate([50, 50, 50, 50]);
         break;
       default:

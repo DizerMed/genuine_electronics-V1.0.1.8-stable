@@ -15,5 +15,5 @@ export const safeLocalStorage = {
     try {
       localStorage.removeItem(key);
     } catch (e) {}
-  }
+  },
 };

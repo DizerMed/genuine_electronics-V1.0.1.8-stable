@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StoreSettings } from '../types';
+import React, { useState } from "react";
+import { StoreSettings } from "../types";
 
 interface WhatsAppFloatingButtonProps {
   storeSettings?: StoreSettings;
@@ -15,16 +15,24 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   // Target support number defaults strictly to +255 624 057 166
-  const rawPhone = customPhone || storeSettings?.whatsappNumber || storeSettings?.phone || '+255624057166';
-  const cleanPhone = rawPhone.replace(/[^0-9]/g, '') || '255624057166';
-  const targetPhone = cleanPhone.startsWith('0') ? `255${cleanPhone.slice(1)}` : cleanPhone;
+  const rawPhone =
+    customPhone ||
+    storeSettings?.whatsappNumber ||
+    storeSettings?.phone ||
+    "+255624057166";
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, "") || "255624057166";
+  const targetPhone = cleanPhone.startsWith("0")
+    ? `255${cleanPhone.slice(1)}`
+    : cleanPhone;
 
-  const message = defaultMessage || `Habari Genuine Electronics Tanzania! Nahitaji msaada / maelezo kuhusu bidhaa na huduma zenu.`;
+  const message =
+    defaultMessage ||
+    `Habari Genuine Electronics Tanzania! Nahitaji msaada / maelezo kuhusu bidhaa na huduma zenu.`;
   const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -36,8 +44,8 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
       <div
         className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-950 text-xs font-bold shadow-xl border border-slate-700/50 dark:border-slate-200/50 backdrop-blur-md transition-all duration-300 pointer-events-none ${
           isHovered
-            ? 'opacity-100 translate-x-0 scale-100'
-            : 'opacity-0 translate-x-2 scale-95'
+            ? "opacity-100 translate-x-0 scale-100"
+            : "opacity-0 translate-x-2 scale-95"
         }`}
       >
         <span className="relative flex h-2 w-2">
@@ -67,7 +75,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
         {/* Continuous 5-Second Heartbeat Radar Wave Ring 2 (Offset) */}
         <span
           className="absolute inset-0 rounded-full bg-emerald-400 -z-10 animate-whatsapp-wave pointer-events-none"
-          style={{ animationDelay: '0.4s' }}
+          style={{ animationDelay: "0.4s" }}
         />
 
         {/* Outer subtle glow */}

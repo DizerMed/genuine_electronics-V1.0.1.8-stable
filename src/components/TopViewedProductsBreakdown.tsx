@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { 
-  Eye, 
-  Search, 
-  Flame, 
-  TrendingUp, 
-  ShoppingCart, 
-  Sparkles, 
-  ArrowUpRight, 
-  CheckCircle2, 
-  Filter, 
+import React, { useState } from "react";
+import {
+  Eye,
+  Search,
+  Flame,
+  TrendingUp,
+  ShoppingCart,
+  Sparkles,
+  ArrowUpRight,
+  CheckCircle2,
+  Filter,
   Tag,
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Percent
-} from 'lucide-react';
-import { VisitorTopProduct } from '../types';
+  Percent,
+} from "lucide-react";
+import { VisitorTopProduct } from "../types";
 
 interface TopViewedProductsBreakdownProps {
   products: VisitorTopProduct[];
@@ -24,32 +24,55 @@ interface TopViewedProductsBreakdownProps {
   isDark?: boolean;
 }
 
-export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProps> = ({
+export const TopViewedProductsBreakdown: React.FC<
+  TopViewedProductsBreakdownProps
+> = ({
   products = [],
   onSelectProduct,
   onSelectSearchQuery,
-  isDark = false
+  isDark = false,
 }) => {
-  const [filterMode, setFilterMode] = useState<'all' | 'trending' | 'search-driven'>('all');
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
+  const [filterMode, setFilterMode] = useState<
+    "all" | "trending" | "search-driven"
+  >("all");
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(
+    null,
+  );
 
   // Filter products based on selected mode
-  const filteredProducts = products.filter(p => {
-    if (filterMode === 'trending') return p.isTrending || (p.trendScore && p.trendScore >= 35);
-    if (filterMode === 'search-driven') return (p.topCorrelatedSearches && p.topCorrelatedSearches.length > 0) || (p.searchAssistedViews && p.searchAssistedViews > 0);
+  const filteredProducts = products.filter((p) => {
+    if (filterMode === "trending")
+      return p.isTrending || (p.trendScore && p.trendScore >= 35);
+    if (filterMode === "search-driven")
+      return (
+        (p.topCorrelatedSearches && p.topCorrelatedSearches.length > 0) ||
+        (p.searchAssistedViews && p.searchAssistedViews > 0)
+      );
     return true;
   });
 
-  const trendingCount = products.filter(p => p.isTrending || (p.trendScore && p.trendScore >= 35)).length;
-  const searchDrivenCount = products.filter(p => (p.topCorrelatedSearches && p.topCorrelatedSearches.length > 0) || (p.searchAssistedViews && p.searchAssistedViews > 0)).length;
+  const trendingCount = products.filter(
+    (p) => p.isTrending || (p.trendScore && p.trendScore >= 35),
+  ).length;
+  const searchDrivenCount = products.filter(
+    (p) =>
+      (p.topCorrelatedSearches && p.topCorrelatedSearches.length > 0) ||
+      (p.searchAssistedViews && p.searchAssistedViews > 0),
+  ).length;
 
-  const bgCard = isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200/80';
-  const textTitle = isDark ? 'text-white' : 'text-slate-900';
-  const textSub = isDark ? 'text-slate-400' : 'text-slate-500';
-  const bgSubtle = isDark ? 'bg-slate-800/80 border-slate-700/80' : 'bg-slate-50 border-slate-100';
+  const bgCard = isDark
+    ? "bg-slate-900 border-slate-800"
+    : "bg-white border-slate-200/80";
+  const textTitle = isDark ? "text-white" : "text-slate-900";
+  const textSub = isDark ? "text-slate-400" : "text-slate-500";
+  const bgSubtle = isDark
+    ? "bg-slate-800/80 border-slate-700/80"
+    : "bg-slate-50 border-slate-100";
 
   return (
-    <div className={`rounded-2xl border ${bgCard} p-5 sm:p-6 shadow-sm flex flex-col justify-between`}>
+    <div
+      className={`rounded-2xl border ${bgCard} p-5 sm:p-6 shadow-sm flex flex-col justify-between`}
+    >
       <div>
         {/* Header & Mode Filters */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -58,10 +81,13 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
               <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                 <Eye className="w-3.5 h-3.5" />
               </div>
-              <h3 className={`text-base font-bold ${textTitle}`}>Top Viewed Products &amp; Search Correlation</h3>
+              <h3 className={`text-base font-bold ${textTitle}`}>
+                Top Viewed Products &amp; Search Correlation
+              </h3>
             </div>
             <p className={`text-xs ${textSub} mt-0.5`}>
-              Identifies high-traffic catalog items correlated with visitor keyword searches.
+              Identifies high-traffic catalog items correlated with visitor
+              keyword searches.
             </p>
           </div>
 
@@ -69,22 +95,22 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
           <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold self-start sm:self-auto">
             <button
               type="button"
-              onClick={() => setFilterMode('all')}
+              onClick={() => setFilterMode("all")}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                filterMode === 'all'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                filterMode === "all"
+                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                  : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               All ({products.length})
             </button>
             <button
               type="button"
-              onClick={() => setFilterMode('trending')}
+              onClick={() => setFilterMode("trending")}
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                filterMode === 'trending'
-                  ? 'bg-orange-500 text-white shadow-xs'
-                  : 'text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30'
+                filterMode === "trending"
+                  ? "bg-orange-500 text-white shadow-xs"
+                  : "text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30"
               }`}
             >
               <Flame className="w-3 h-3" />
@@ -92,11 +118,11 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
             </button>
             <button
               type="button"
-              onClick={() => setFilterMode('search-driven')}
+              onClick={() => setFilterMode("search-driven")}
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                filterMode === 'search-driven'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30'
+                filterMode === "search-driven"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30"
               }`}
             >
               <Search className="w-3 h-3" />
@@ -110,7 +136,9 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
           <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
             {filteredProducts.slice(0, 10).map((prod, idx) => {
               const isExpanded = expandedProductId === prod.id;
-              const hasSearches = prod.topCorrelatedSearches && prod.topCorrelatedSearches.length > 0;
+              const hasSearches =
+                prod.topCorrelatedSearches &&
+                prod.topCorrelatedSearches.length > 0;
               const trendScore = prod.trendScore || (prod.isTrending ? 85 : 40);
 
               return (
@@ -120,9 +148,11 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
                 >
                   <div className="p-3 flex items-center justify-between gap-3">
                     {/* Product Image & Info */}
-                    <div 
+                    <div
                       className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer"
-                      onClick={() => onSelectProduct && onSelectProduct(prod.id)}
+                      onClick={() =>
+                        onSelectProduct && onSelectProduct(prod.id)
+                      }
                       title={`Filter logs for ${prod.name}`}
                     >
                       <div className="relative shrink-0">
@@ -145,7 +175,9 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className={`text-xs font-bold ${textTitle} truncate max-w-[200px] sm:max-w-xs hover:text-blue-600`}>
+                          <p
+                            className={`text-xs font-bold ${textTitle} truncate max-w-[200px] sm:max-w-xs hover:text-blue-600`}
+                          >
                             {prod.name}
                           </p>
                           {prod.isTrending && (
@@ -174,7 +206,10 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
                             {prod.views} views
                           </span>
                           {trendScore > 0 && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold" title="Composite Trend Score">
+                            <span
+                              className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold"
+                              title="Composite Trend Score"
+                            >
                               {trendScore} pts
                             </span>
                           )}
@@ -187,11 +222,17 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
                       {hasSearches && (
                         <button
                           type="button"
-                          onClick={() => setExpandedProductId(isExpanded ? null : prod.id)}
+                          onClick={() =>
+                            setExpandedProductId(isExpanded ? null : prod.id)
+                          }
                           className="p-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                           title="Toggle correlated search queries"
                         >
-                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
                         </button>
                       )}
                     </div>
@@ -203,7 +244,9 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
                           <Search className="w-2.5 h-2.5" />
-                          <span>Search Terms that Led to this Product Visit:</span>
+                          <span>
+                            Search Terms that Led to this Product Visit:
+                          </span>
                         </span>
                         {prod.searchAssistedViews !== undefined && (
                           <span className="text-[10px] text-slate-500">
@@ -217,7 +260,10 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
                           <button
                             key={sIdx}
                             type="button"
-                            onClick={() => onSelectSearchQuery && onSelectSearchQuery(s.query)}
+                            onClick={() =>
+                              onSelectSearchQuery &&
+                              onSelectSearchQuery(s.query)
+                            }
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/40 text-[11px] font-medium transition-colors cursor-pointer group"
                             title={`Filter logs for search "${s.query}"`}
                           >
@@ -246,7 +292,10 @@ export const TopViewedProductsBreakdown: React.FC<TopViewedProductsBreakdownProp
       <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-amber-500" />
-          <span>Click any product or correlated search tag to inspect corresponding session journey logs.</span>
+          <span>
+            Click any product or correlated search tag to inspect corresponding
+            session journey logs.
+          </span>
         </span>
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           Ranked by Trending Velocity &amp; Traffic Volume

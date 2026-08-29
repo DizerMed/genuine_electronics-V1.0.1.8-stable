@@ -1,10 +1,20 @@
-import React from 'react';
-import { OverdueLoanItem, buildLoanNotificationCopy } from '../lib/loanOverdueWorker';
-import { formatTZS } from '../types';
-import { 
-  AlertTriangle, X, DollarSign, MessageCircle, Phone, 
-  Clock, ShieldAlert, Volume2, ArrowRight
-} from 'lucide-react';
+import React from "react";
+import {
+  OverdueLoanItem,
+  buildLoanNotificationCopy,
+} from "../lib/loanOverdueWorker";
+import { formatTZS } from "../types";
+import {
+  AlertTriangle,
+  X,
+  DollarSign,
+  MessageCircle,
+  Phone,
+  Clock,
+  ShieldAlert,
+  Volume2,
+  ArrowRight,
+} from "lucide-react";
 
 export interface LoanOverdueNotificationToastProps {
   overdueItem: OverdueLoanItem | null;
@@ -13,24 +23,20 @@ export interface LoanOverdueNotificationToastProps {
   totalOverdueCount?: number;
 }
 
-export const LoanOverdueNotificationToast: React.FC<LoanOverdueNotificationToastProps> = ({
-  overdueItem,
-  onDismiss,
-  onOpenRepay,
-  totalOverdueCount = 1
-}) => {
+export const LoanOverdueNotificationToast: React.FC<
+  LoanOverdueNotificationToastProps
+> = ({ overdueItem, onDismiss, onOpenRepay, totalOverdueCount = 1 }) => {
   if (!overdueItem) return null;
 
   const copy = buildLoanNotificationCopy(overdueItem);
-  const cleanPhone = (overdueItem.customerPhone || '').replace(/[^0-9+]/g, '');
+  const cleanPhone = (overdueItem.customerPhone || "").replace(/[^0-9+]/g, "");
 
   return (
-    <div 
+    <div
       className="fixed bottom-5 right-5 z-[9999] max-w-md w-full animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto"
       role="alert"
     >
       <div className="bg-slate-900 border-2 border-rose-500 text-white rounded-2xl shadow-2xl shadow-rose-950/60 p-4 space-y-3 relative overflow-hidden">
-        
         {/* Glow accent behind toast */}
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-rose-600/20 rounded-full blur-2xl pointer-events-none" />
 
@@ -69,21 +75,35 @@ export const LoanOverdueNotificationToast: React.FC<LoanOverdueNotificationToast
         {/* Core Message Body matching user specifications */}
         <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700/80 space-y-1.5 relative z-10 text-xs">
           <p className="text-slate-200 leading-relaxed font-medium">
-            There is an unpaid amount of{' '}
+            There is an unpaid amount of{" "}
             <strong className="text-amber-400 font-black text-sm">
               {formatTZS(overdueItem.remainingBalance)}
-            </strong>{' '}
-            for <strong className="text-white font-bold">{overdueItem.productSummary}</strong> by{' '}
-            <strong className="text-blue-300 font-bold">{overdueItem.customerName}</strong> since{' '}
-            <span className="font-mono text-slate-300 font-semibold">{overdueItem.dueDateTimeStr}</span>.
+            </strong>{" "}
+            for{" "}
+            <strong className="text-white font-bold">
+              {overdueItem.productSummary}
+            </strong>{" "}
+            by{" "}
+            <strong className="text-blue-300 font-bold">
+              {overdueItem.customerName}
+            </strong>{" "}
+            since{" "}
+            <span className="font-mono text-slate-300 font-semibold">
+              {overdueItem.dueDateTimeStr}
+            </span>
+            .
           </p>
 
           <div className="flex items-center justify-between text-[10px] text-rose-400 font-bold pt-1 border-t border-slate-700/60">
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              <span>Time limit has exceeded ({overdueItem.overdueDurationText})</span>
+              <span>
+                Time limit has exceeded ({overdueItem.overdueDurationText})
+              </span>
             </span>
-            <span className="font-mono text-slate-400">#{overdueItem.receiptNumber}</span>
+            <span className="font-mono text-slate-400">
+              #{overdueItem.receiptNumber}
+            </span>
           </div>
         </div>
 
@@ -102,7 +122,7 @@ export const LoanOverdueNotificationToast: React.FC<LoanOverdueNotificationToast
 
           {cleanPhone && (
             <a
-              href={`https://wa.me/${cleanPhone.replace(/[^0-9]/g, '')}?text=${copy.whatsappMessage}`}
+              href={`https://wa.me/${cleanPhone.replace(/[^0-9]/g, "")}?text=${copy.whatsappMessage}`}
               target="_blank"
               rel="noreferrer"
               title="Send WhatsApp Notice"

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Order, StoreSettings } from '../types';
-import { InvoiceGenerator } from './InvoiceGenerator';
+import React from "react";
+import { Order, StoreSettings } from "../types";
+import { InvoiceGenerator } from "./InvoiceGenerator";
 
 export interface InvoicePrintModalProps {
   order: Order;
@@ -8,14 +8,14 @@ export interface InvoicePrintModalProps {
   storeSettings?: StoreSettings;
   autoPrint?: boolean;
   defaultIncludeVat?: boolean;
-  defaultDocType?: 'tax' | 'proforma' | 'delivery';
+  defaultDocType?: "tax" | "proforma" | "delivery";
   isClientView?: boolean;
   hideTypeSwitcher?: boolean;
 }
 
-export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({ 
-  order, 
-  onClose, 
+export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
+  order,
+  onClose,
   storeSettings,
   autoPrint = false,
   defaultIncludeVat,

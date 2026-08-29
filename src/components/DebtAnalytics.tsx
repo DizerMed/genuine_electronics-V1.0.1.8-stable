@@ -1,21 +1,45 @@
-import React, { useMemo, useState } from 'react';
-import { POSTransaction, formatTZS, formatToGMT3 } from '../types';
-import { 
-  getLoanCustomerName, 
-  getLoanCustomerPhone, 
-  isLoanTransaction, 
-  computeLoanMeta, 
-  getLoanDueDate 
-} from '../utils/loanUtils';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area
-} from 'recharts';
-import { 
-  AlertTriangle, TrendingUp, Clock, DollarSign, Users, 
-  CheckCircle2, ShieldAlert, ArrowUpRight, Phone, Banknote, Calendar,
-  CreditCard, PieChart as PieChartIcon, BarChart3, ChevronRight, Filter, Search
-} from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import { POSTransaction, formatTZS, formatToGMT3 } from "../types";
+import {
+  getLoanCustomerName,
+  getLoanCustomerPhone,
+  isLoanTransaction,
+  computeLoanMeta,
+  getLoanDueDate,
+} from "../utils/loanUtils";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+} from "recharts";
+import {
+  AlertTriangle,
+  TrendingUp,
+  Clock,
+  DollarSign,
+  Users,
+  CheckCircle2,
+  ShieldAlert,
+  ArrowUpRight,
+  Phone,
+  Banknote,
+  Calendar,
+  CreditCard,
+  PieChart as PieChartIcon,
+  BarChart3,
+  ChevronRight,
+  Filter,
+  Search,
+} from "lucide-react";
 
 interface DebtAnalyticsProps {
   posTransactions: POSTransaction[];
@@ -26,20 +50,22 @@ interface DebtAnalyticsProps {
   onGoToLoans?: () => void;
 }
 
-export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({ 
+export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
   posTransactions,
   isDark = false,
-  cardBg = 'bg-white dark:bg-slate-900',
-  textTitle = 'text-slate-900 dark:text-white',
-  textSub = 'text-slate-500 dark:text-slate-400',
-  onGoToLoans
+  cardBg = "bg-white dark:bg-slate-900",
+  textTitle = "text-slate-900 dark:text-white",
+  textSub = "text-slate-500 dark:text-slate-400",
+  onGoToLoans,
 }) => {
-  const [agingTimeframe, setAgingTimeframe] = useState<'all' | '30days' | '60days'>('all');
-  const [searchDebtor, setSearchDebtor] = useState('');
+  const [agingTimeframe, setAgingTimeframe] = useState<
+    "all" | "30days" | "60days"
+  >("all");
+  const [searchDebtor, setSearchDebtor] = useState("");
 
   // Extract all credit/loan transactions using robust filter
   const loanData = useMemo(() => {
-    return posTransactions.filter(tx => isLoanTransaction(tx));
+    return posTransactions.filter((tx) => isLoanTransaction(tx));
   }, [posTransactions]);
 
   // Compute metadata map for efficiency
@@ -77,62 +103,100 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
   }, [totalLoanGross, totalOutstanding]);
 
   const overdueCount = useMemo(() => {
-    return loanData.filter(tx => {
+    return loanData.filter((tx) => {
       const meta = loanMetaMap.get(tx.id);
       return meta ? meta.isOverdue : false;
     }).length;
   }, [loanData, loanMetaMap]);
 
   const activeDebtors = useMemo(() => {
-    return loanData.filter(tx => {
+    return loanData.filter((tx) => {
       const meta = loanMetaMap.get(tx.id);
       return meta ? meta.remainingBalance > 0 : false;
     }).length;
   }, [loanData, loanMetaMap]);
 
-  const recoveryRate = totalLoanGross > 0 
-    ? Math.min(100, Math.max(0, Math.round((totalRecovered / totalLoanGross) * 100))) 
-    : 100;
+  const recoveryRate =
+    totalLoanGross > 0
+      ? Math.min(
+          100,
+          Math.max(0, Math.round((totalRecovered / totalLoanGross) * 100)),
+        )
+      : 100;
 
   // Aging Data with theme-aligned palette
   const agingData = useMemo(() => {
-    const buckets = { 'Current (On-Time)': 0, '1-30 Days': 0, '31-60 Days': 0, '60+ Days': 0 };
-    const counts = { 'Current (On-Time)': 0, '1-30 Days': 0, '31-60 Days': 0, '60+ Days': 0 };
+    const buckets = {
+      "Current (On-Time)": 0,
+      "1-30 Days": 0,
+      "31-60 Days": 0,
+      "60+ Days": 0,
+    };
+    const counts = {
+      "Current (On-Time)": 0,
+      "1-30 Days": 0,
+      "31-60 Days": 0,
+      "60+ Days": 0,
+    };
     const now = new Date();
-    
-    loanData.forEach(tx => {
+
+    loanData.forEach((tx) => {
       const meta = loanMetaMap.get(tx.id);
       if (!meta || meta.remainingBalance <= 0) return;
-      
+
       if (meta.dueDate) {
         const dueDateObj = new Date(meta.dueDate);
         const diffTime = now.getTime() - dueDateObj.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays <= 0) {
-          buckets['Current (On-Time)'] += meta.remainingBalance;
-          counts['Current (On-Time)'] += 1;
+          buckets["Current (On-Time)"] += meta.remainingBalance;
+          counts["Current (On-Time)"] += 1;
         } else if (diffDays <= 30) {
-          buckets['1-30 Days'] += meta.remainingBalance;
-          counts['1-30 Days'] += 1;
+          buckets["1-30 Days"] += meta.remainingBalance;
+          counts["1-30 Days"] += 1;
         } else if (diffDays <= 60) {
-          buckets['31-60 Days'] += meta.remainingBalance;
-          counts['31-60 Days'] += 1;
+          buckets["31-60 Days"] += meta.remainingBalance;
+          counts["31-60 Days"] += 1;
         } else {
-          buckets['60+ Days'] += meta.remainingBalance;
-          counts['60+ Days'] += 1;
+          buckets["60+ Days"] += meta.remainingBalance;
+          counts["60+ Days"] += 1;
         }
       } else {
-        buckets['Current (On-Time)'] += meta.remainingBalance;
-        counts['Current (On-Time)'] += 1;
+        buckets["Current (On-Time)"] += meta.remainingBalance;
+        counts["Current (On-Time)"] += 1;
       }
     });
-    
+
     return [
-      { name: 'Current (On-Time)', value: buckets['Current (On-Time)'], count: counts['Current (On-Time)'], color: '#3b82f6', gradientId: 'currentGrad' },
-      { name: '1-30 Days Overdue', value: buckets['1-30 Days'], count: counts['1-30 Days'], color: '#f59e0b', gradientId: 'warningGrad' },
-      { name: '31-60 Days Overdue', value: buckets['31-60 Days'], count: counts['31-60 Days'], color: '#f97316', gradientId: 'lateGrad' },
-      { name: '60+ Days Critical', value: buckets['60+ Days'], count: counts['60+ Days'], color: '#ef4444', gradientId: 'criticalGrad' },
+      {
+        name: "Current (On-Time)",
+        value: buckets["Current (On-Time)"],
+        count: counts["Current (On-Time)"],
+        color: "#3b82f6",
+        gradientId: "currentGrad",
+      },
+      {
+        name: "1-30 Days Overdue",
+        value: buckets["1-30 Days"],
+        count: counts["1-30 Days"],
+        color: "#f59e0b",
+        gradientId: "warningGrad",
+      },
+      {
+        name: "31-60 Days Overdue",
+        value: buckets["31-60 Days"],
+        count: counts["31-60 Days"],
+        color: "#f97316",
+        gradientId: "lateGrad",
+      },
+      {
+        name: "60+ Days Critical",
+        value: buckets["60+ Days"],
+        count: counts["60+ Days"],
+        color: "#ef4444",
+        gradientId: "criticalGrad",
+      },
     ];
   }, [loanData, loanMetaMap]);
 
@@ -145,9 +209,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
     loanData.forEach((tx) => {
       const meta = loanMetaMap.get(tx.id);
       if (!meta) return;
-      if (meta.computedStatus === 'paid') {
+      if (meta.computedStatus === "paid") {
         fullyPaid++;
-      } else if (meta.computedStatus === 'overdue') {
+      } else if (meta.computedStatus === "overdue") {
         overdue++;
       } else {
         currentActive++;
@@ -155,27 +219,52 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
     });
 
     return [
-      { name: 'Fully Settled', value: fullyPaid, color: '#10b981', pct: loanData.length ? Math.round((fullyPaid / loanData.length) * 100) : 0 },
-      { name: 'Active On-Track', value: currentActive, color: '#3b82f6', pct: loanData.length ? Math.round((currentActive / loanData.length) * 100) : 0 },
-      { name: 'Overdue / Action Needed', value: overdue, color: '#ef4444', pct: loanData.length ? Math.round((overdue / loanData.length) * 100) : 0 },
-    ].filter(item => item.value > 0);
+      {
+        name: "Fully Settled",
+        value: fullyPaid,
+        color: "#10b981",
+        pct: loanData.length
+          ? Math.round((fullyPaid / loanData.length) * 100)
+          : 0,
+      },
+      {
+        name: "Active On-Track",
+        value: currentActive,
+        color: "#3b82f6",
+        pct: loanData.length
+          ? Math.round((currentActive / loanData.length) * 100)
+          : 0,
+      },
+      {
+        name: "Overdue / Action Needed",
+        value: overdue,
+        color: "#ef4444",
+        pct: loanData.length
+          ? Math.round((overdue / loanData.length) * 100)
+          : 0,
+      },
+    ].filter((item) => item.value > 0);
   }, [loanData, loanMetaMap]);
 
   // Top High Balance Unsettled Debtors
   const topDebtors = useMemo(() => {
     return [...loanData]
-      .filter(tx => {
+      .filter((tx) => {
         const meta = loanMetaMap.get(tx.id);
         return meta ? meta.remainingBalance > 0 : false;
       })
-      .filter(tx => {
+      .filter((tx) => {
         if (!searchDebtor) return true;
         const q = String(searchDebtor || "").toLowerCase();
         const cPhone = getLoanCustomerPhone(tx);
         return (
-          String(getLoanCustomerName(tx) || '').toLowerCase().includes(q) ||
-          String(cPhone || "").toLowerCase().includes(q) ||
-          (tx.id || '').toLowerCase().includes(q)
+          String(getLoanCustomerName(tx) || "")
+            .toLowerCase()
+            .includes(q) ||
+          String(cPhone || "")
+            .toLowerCase()
+            .includes(q) ||
+          (tx.id || "").toLowerCase().includes(q)
         );
       })
       .sort((a, b) => {
@@ -187,10 +276,12 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
   }, [loanData, searchDebtor, loanMetaMap]);
 
   // Theme-aware tokens
-  const borderColor = isDark ? 'border-slate-800' : 'border-slate-200';
-  const subCardBg = isDark ? 'bg-slate-800/40' : 'bg-slate-50/80';
-  const gridStroke = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.9)';
-  const axisColor = isDark ? '#94a3b8' : '#64748b';
+  const borderColor = isDark ? "border-slate-800" : "border-slate-200";
+  const subCardBg = isDark ? "bg-slate-800/40" : "bg-slate-50/80";
+  const gridStroke = isDark
+    ? "rgba(51, 65, 85, 0.4)"
+    : "rgba(226, 232, 240, 0.9)";
+  const axisColor = isDark ? "#94a3b8" : "#64748b";
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -198,7 +289,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className={`text-2xl font-extrabold tracking-tight ${textTitle}`}>
+            <h2
+              className={`text-2xl font-extrabold tracking-tight ${textTitle}`}
+            >
               Debt & Credit Analytics
             </h2>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20">
@@ -207,7 +300,8 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
             </span>
           </div>
           <p className={`text-sm mt-1 ${textSub}`}>
-            Portfolio intelligence on customer credit balances, installment debt aging, recovery rates, and collection follow-ups.
+            Portfolio intelligence on customer credit balances, installment debt
+            aging, recovery rates, and collection follow-ups.
           </p>
         </div>
 
@@ -225,7 +319,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
       {/* 4 Primary KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Unpaid Receivables */}
-        <div className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}>
+        <div
+          className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}
+        >
           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <div className="p-3 bg-amber-500/10 text-amber-500 rounded-2xl border border-amber-500/20">
@@ -236,10 +332,14 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
             </span>
           </div>
           <div className="mt-4">
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}>
+            <p
+              className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}
+            >
               Total Unpaid Outstanding
             </p>
-            <h3 className={`text-2xl font-black mt-1 tracking-tight ${textTitle}`}>
+            <h3
+              className={`text-2xl font-black mt-1 tracking-tight ${textTitle}`}
+            >
               {formatTZS(totalOutstanding)}
             </h3>
             <div className="flex items-center gap-1.5 mt-2">
@@ -251,7 +351,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
         </div>
 
         {/* Card 2: Overdue Loans */}
-        <div className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}>
+        <div
+          className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}
+        >
           <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-2xl group-hover:bg-rose-500/10 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <div className="p-3 bg-rose-500/10 text-rose-500 rounded-2xl border border-rose-500/20">
@@ -260,24 +362,28 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
             <span
               className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${
                 overdueCount > 0
-                  ? 'bg-rose-500/15 text-rose-500 border-rose-500/30 animate-pulse'
-                  : 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+                  ? "bg-rose-500/15 text-rose-500 border-rose-500/30 animate-pulse"
+                  : "bg-emerald-500/15 text-emerald-500 border-emerald-500/30"
               }`}
             >
-              {overdueCount > 0 ? `${overdueCount} Overdue` : 'Healthy'}
+              {overdueCount > 0 ? `${overdueCount} Overdue` : "Healthy"}
             </span>
           </div>
           <div className="mt-4">
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}>
+            <p
+              className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}
+            >
               Overdue Customer Loans
             </p>
             <h3
               className={`text-2xl font-black mt-1 tracking-tight ${
-                overdueCount > 0 ? 'text-rose-500' : textTitle
+                overdueCount > 0 ? "text-rose-500" : textTitle
               }`}
             >
-              {overdueCount}{' '}
-              <span className="text-xs font-semibold text-slate-400">contracts</span>
+              {overdueCount}{" "}
+              <span className="text-xs font-semibold text-slate-400">
+                contracts
+              </span>
             </h3>
             <div className="flex items-center gap-1.5 mt-2">
               <span className={`text-[11px] font-medium ${textSub}`}>
@@ -288,7 +394,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
         </div>
 
         {/* Card 3: Recovered Down Payments */}
-        <div className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}>
+        <div
+          className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}
+        >
           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-2xl border border-emerald-500/20">
@@ -299,7 +407,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
             </span>
           </div>
           <div className="mt-4">
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}>
+            <p
+              className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}
+            >
               Total Recovered & Paid
             </p>
             <h3 className="text-2xl font-black mt-1 tracking-tight text-emerald-500">
@@ -316,7 +426,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
         </div>
 
         {/* Card 4: Total Credit Portfolio */}
-        <div className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}>
+        <div
+          className={`p-5 rounded-3xl border shadow-sm transition-all hover:shadow-md ${cardBg} ${borderColor} relative overflow-hidden group`}
+        >
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <div className="p-3 bg-blue-500/10 text-blue-500 rounded-2xl border border-blue-500/20">
@@ -327,15 +439,20 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
             </span>
           </div>
           <div className="mt-4">
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}>
+            <p
+              className={`text-[11px] font-bold uppercase tracking-wider ${textSub}`}
+            >
               Total Credit Issued
             </p>
-            <h3 className={`text-2xl font-black mt-1 tracking-tight ${textTitle}`}>
+            <h3
+              className={`text-2xl font-black mt-1 tracking-tight ${textTitle}`}
+            >
               {formatTZS(totalLoanGross)}
             </h3>
             <div className="flex items-center gap-1.5 mt-2">
               <span className={`text-[11px] font-medium ${textSub}`}>
-                Across <strong>{loanData.length}</strong> total issued agreements
+                Across <strong>{loanData.length}</strong> total issued
+                agreements
               </span>
             </div>
           </div>
@@ -345,7 +462,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
       {/* Analytics Visuals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Aging Breakdown Bar Chart */}
-        <div className={`lg:col-span-8 p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor}`}>
+        <div
+          className={`lg:col-span-8 p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor}`}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
             <div>
               <div className="flex items-center gap-2">
@@ -355,11 +474,14 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                 </h3>
               </div>
               <p className={`text-xs mt-0.5 ${textSub}`}>
-                Classification of active credit receivables by delinquency duration.
+                Classification of active credit receivables by delinquency
+                duration.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-xl text-xs font-bold border ${isDark ? 'bg-slate-800/80 border-slate-700 text-blue-400' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+              <span
+                className={`px-3 py-1 rounded-xl text-xs font-bold border ${isDark ? "bg-slate-800/80 border-slate-700 text-blue-400" : "bg-blue-50 border-blue-200 text-blue-700"}`}
+              >
                 {formatTZS(totalOutstanding)} Total
               </span>
             </div>
@@ -367,35 +489,58 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
 
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={agingData} margin={{ top: 15, right: 10, left: -15, bottom: 5 }}>
+              <BarChart
+                data={agingData}
+                margin={{ top: 15, right: 10, left: -15, bottom: 5 }}
+              >
                 <defs>
                   <linearGradient id="currentGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.95} />
-                    <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.75} />
+                    <stop
+                      offset="100%"
+                      stopColor="#1d4ed8"
+                      stopOpacity={0.75}
+                    />
                   </linearGradient>
                   <linearGradient id="warningGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.95} />
-                    <stop offset="100%" stopColor="#d97706" stopOpacity={0.75} />
+                    <stop
+                      offset="100%"
+                      stopColor="#d97706"
+                      stopOpacity={0.75}
+                    />
                   </linearGradient>
                   <linearGradient id="lateGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#f97316" stopOpacity={0.95} />
-                    <stop offset="100%" stopColor="#ea580c" stopOpacity={0.75} />
+                    <stop
+                      offset="100%"
+                      stopColor="#ea580c"
+                      stopOpacity={0.75}
+                    />
                   </linearGradient>
                   <linearGradient id="criticalGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#ef4444" stopOpacity={0.95} />
-                    <stop offset="100%" stopColor="#dc2626" stopOpacity={0.75} />
+                    <stop
+                      offset="100%"
+                      stopColor="#dc2626"
+                      stopOpacity={0.75}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  stroke={axisColor} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={gridStroke}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke={axisColor}
                   fontSize={11}
                   tickLine={false}
                   axisLine={{ stroke: gridStroke }}
                 />
-                <YAxis 
-                  stroke={axisColor} 
+                <YAxis
+                  stroke={axisColor}
                   fontSize={10}
                   tickLine={false}
                   axisLine={false}
@@ -403,28 +548,35 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                     if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
                     if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
                     return `${val}`;
-                  }} 
+                  }}
                 />
-                <Tooltip 
-                  cursor={{ fill: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }}
+                <Tooltip
+                  cursor={{
+                    fill: isDark
+                      ? "rgba(255,255,255,0.03)"
+                      : "rgba(0,0,0,0.03)",
+                  }}
                   formatter={(val: number, name: string, item: any) => [
                     `${formatTZS(val)} (${item.payload.count || 0} debtors)`,
-                    'Outstanding'
+                    "Outstanding",
                   ]}
                   contentStyle={{
-                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                    borderColor: isDark ? '#334155' : '#e2e8f0',
-                    borderRadius: '1rem',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
-                    fontSize: '12px',
+                    backgroundColor: isDark ? "#0f172a" : "#ffffff",
+                    borderColor: isDark ? "#334155" : "#e2e8f0",
+                    borderRadius: "1rem",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.25)",
+                    fontSize: "12px",
                     fontWeight: 700,
-                    color: isDark ? '#f8fafc' : '#0f172a',
-                    padding: '8px 12px'
+                    color: isDark ? "#f8fafc" : "#0f172a",
+                    padding: "8px 12px",
                   }}
                 />
                 <Bar dataKey="value" radius={[8, 8, 0, 0]} maxBarSize={56}>
                   {agingData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={`url(#${entry.gradientId})`} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={`url(#${entry.gradientId})`}
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -434,14 +586,28 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
           {/* Aging Legend Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 mt-2 border-t border-slate-100 dark:border-slate-800">
             {agingData.map((b, i) => (
-              <div key={i} className={`p-2.5 rounded-xl ${subCardBg} border ${borderColor} flex flex-col justify-between`}>
+              <div
+                key={i}
+                className={`p-2.5 rounded-xl ${subCardBg} border ${borderColor} flex flex-col justify-between`}
+              >
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
-                  <span className={`text-[10px] font-semibold truncate ${textSub}`}>{b.name}</span>
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: b.color }}
+                  />
+                  <span
+                    className={`text-[10px] font-semibold truncate ${textSub}`}
+                  >
+                    {b.name}
+                  </span>
                 </div>
                 <div className="mt-1 flex items-baseline justify-between">
-                  <span className={`text-xs font-black ${textTitle}`}>{formatTZS(b.value)}</span>
-                  <span className="text-[10px] font-bold text-slate-400">{b.count} accounts</span>
+                  <span className={`text-xs font-black ${textTitle}`}>
+                    {formatTZS(b.value)}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {b.count} accounts
+                  </span>
                 </div>
               </div>
             ))}
@@ -449,13 +615,19 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
         </div>
 
         {/* Portfolio Status Distribution (Donut Chart) */}
-        <div className={`lg:col-span-4 p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor} flex flex-col justify-between`}>
+        <div
+          className={`lg:col-span-4 p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor} flex flex-col justify-between`}
+        >
           <div>
             <div className="flex items-center gap-2 mb-1">
               <PieChartIcon className="w-4 h-4 text-purple-500" />
-              <h3 className={`text-base font-extrabold ${textTitle}`}>Portfolio Health</h3>
+              <h3 className={`text-base font-extrabold ${textTitle}`}>
+                Portfolio Health
+              </h3>
             </div>
-            <p className={`text-xs ${textSub}`}>Status distribution of all loan contracts</p>
+            <p className={`text-xs ${textSub}`}>
+              Status distribution of all loan contracts
+            </p>
 
             {portfolioDistribution.length > 0 ? (
               <div className="h-52 w-full mt-3">
@@ -470,25 +642,25 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                       innerRadius={52}
                       outerRadius={78}
                       paddingAngle={4}
-                      stroke={isDark ? '#0f172a' : '#ffffff'}
+                      stroke={isDark ? "#0f172a" : "#ffffff"}
                       strokeWidth={2}
                     >
                       {portfolioDistribution.map((entry, index) => (
                         <Cell key={`slice-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip 
+                    <Tooltip
                       formatter={(val: number, name: string, item: any) => [
-                        `${val} contracts (${item.payload.pct}%)`, 
-                        'Status'
+                        `${val} contracts (${item.payload.pct}%)`,
+                        "Status",
                       ]}
                       contentStyle={{
-                        backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                        borderColor: isDark ? '#334155' : '#e2e8f0',
-                        borderRadius: '0.75rem',
-                        fontSize: '11px',
+                        backgroundColor: isDark ? "#0f172a" : "#ffffff",
+                        borderColor: isDark ? "#334155" : "#e2e8f0",
+                        borderRadius: "0.75rem",
+                        fontSize: "11px",
                         fontWeight: 700,
-                        color: isDark ? '#ffffff' : '#0f172a'
+                        color: isDark ? "#ffffff" : "#0f172a",
                       }}
                     />
                   </PieChart>
@@ -504,14 +676,26 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
 
           <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
             {portfolioDistribution.map((item, idx) => (
-              <div key={idx} className={`p-2 rounded-xl flex items-center justify-between text-xs ${subCardBg}`}>
+              <div
+                key={idx}
+                className={`p-2 rounded-xl flex items-center justify-between text-xs ${subCardBg}`}
+              >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                  <span className={`font-semibold ${textSub}`}>{item.name}</span>
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className={`font-semibold ${textSub}`}>
+                    {item.name}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={`font-black ${textTitle}`}>{item.value}</span>
-                  <span className="text-[10px] font-bold text-slate-400">({item.pct}%)</span>
+                  <span className={`font-black ${textTitle}`}>
+                    {item.value}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    ({item.pct}%)
+                  </span>
                 </div>
               </div>
             ))}
@@ -520,15 +704,20 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
       </div>
 
       {/* Top High-Balance Unsettled Debtors Table */}
-      <div className={`p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor}`}>
+      <div
+        className={`p-6 rounded-3xl border shadow-sm ${cardBg} ${borderColor}`}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div>
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-amber-500" />
-              <h3 className={`text-base font-extrabold ${textTitle}`}>Top Outstanding Debtors</h3>
+              <h3 className={`text-base font-extrabold ${textTitle}`}>
+                Top Outstanding Debtors
+              </h3>
             </div>
             <p className={`text-xs mt-0.5 ${textSub}`}>
-              Prioritized list of active debtor accounts by unpaid balance for collection follow-ups.
+              Prioritized list of active debtor accounts by unpaid balance for
+              collection follow-ups.
             </p>
           </div>
 
@@ -541,7 +730,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                 value={searchDebtor}
                 onChange={(e) => setSearchDebtor(e.target.value)}
                 className={`pl-8 pr-3 py-1.5 rounded-xl border text-xs font-semibold focus:ring-2 focus:ring-blue-500/20 focus:outline-none ${
-                  isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-800'
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-white"
+                    : "bg-slate-50 border-slate-200 text-slate-800"
                 }`}
               />
             </div>
@@ -559,13 +750,19 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
         </div>
 
         {topDebtors.length === 0 ? (
-          <div className={`text-center py-12 rounded-2xl border ${borderColor} ${subCardBg}`}>
+          <div
+            className={`text-center py-12 rounded-2xl border ${borderColor} ${subCardBg}`}
+          >
             <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2 opacity-80" />
             <h4 className={`text-sm font-bold ${textTitle}`}>
-              {searchDebtor ? 'No debtors match your search query' : 'All Accounts Fully Settled'}
+              {searchDebtor
+                ? "No debtors match your search query"
+                : "All Accounts Fully Settled"}
             </h4>
             <p className={`text-xs mt-1 ${textSub}`}>
-              {searchDebtor ? 'Try typing a different name or phone number.' : 'There are no outstanding credit balances requiring collection.'}
+              {searchDebtor
+                ? "Try typing a different name or phone number."
+                : "There are no outstanding credit balances requiring collection."}
             </p>
           </div>
         ) : (
@@ -574,8 +771,8 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
               <thead
                 className={`uppercase text-[10px] font-black tracking-wider border-b ${
                   isDark
-                    ? 'bg-slate-800/60 text-slate-400 border-slate-800'
-                    : 'bg-slate-50 text-slate-600 border-slate-200'
+                    ? "bg-slate-800/60 text-slate-400 border-slate-800"
+                    : "bg-slate-50 text-slate-600 border-slate-200"
                 }`}
               >
                 <tr>
@@ -592,9 +789,15 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                 {topDebtors.map((tx) => {
                   const meta = loanMetaMap.get(tx.id) || computeLoanMeta(tx);
                   const now = new Date().getTime();
-                  const dueDateObj = meta.dueDate ? new Date(meta.dueDate) : null;
+                  const dueDateObj = meta.dueDate
+                    ? new Date(meta.dueDate)
+                    : null;
                   const isOverdue = meta.isOverdue;
-                  const diffDays = dueDateObj ? Math.ceil((dueDateObj.getTime() - now) / (1000 * 60 * 60 * 24)) : null;
+                  const diffDays = dueDateObj
+                    ? Math.ceil(
+                        (dueDateObj.getTime() - now) / (1000 * 60 * 60 * 24),
+                      )
+                    : null;
                   const customerPhone = getLoanCustomerPhone(tx);
                   const customerName = getLoanCustomerName(tx);
 
@@ -602,19 +805,25 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                     <tr
                       key={tx.id}
                       className={`transition-colors ${
-                        isDark ? 'hover:bg-slate-800/40' : 'hover:bg-slate-50'
+                        isDark ? "hover:bg-slate-800/40" : "hover:bg-slate-50"
                       }`}
                     >
                       <td className="p-3.5 font-bold">
                         <div className="flex items-center gap-2.5">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                            isOverdue ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-500/10 text-blue-500'
-                          }`}>
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                              isOverdue
+                                ? "bg-rose-500/10 text-rose-500"
+                                : "bg-blue-500/10 text-blue-500"
+                            }`}
+                          >
                             {customerName.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className={textTitle}>{customerName}</div>
-                            <div className={`text-[10px] font-mono ${textSub}`}>{tx.receiptNumber || tx.id}</div>
+                            <div className={`text-[10px] font-mono ${textSub}`}>
+                              {tx.receiptNumber || tx.id}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -629,7 +838,9 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                             <span>{customerPhone}</span>
                           </a>
                         ) : (
-                          <span className="text-slate-400 italic">No phone on record</span>
+                          <span className="text-slate-400 italic">
+                            No phone on record
+                          </span>
                         )}
                       </td>
 
@@ -637,14 +848,28 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <div>
-                            <span className={isOverdue ? 'text-rose-500 font-bold' : textTitle}>
-                              {meta.dueDate || 'Not set'}
+                            <span
+                              className={
+                                isOverdue
+                                  ? "text-rose-500 font-bold"
+                                  : textTitle
+                              }
+                            >
+                              {meta.dueDate || "Not set"}
                             </span>
                             {diffDays !== null && (
-                              <div className={`text-[10px] font-semibold ${
-                                isOverdue ? 'text-rose-500' : diffDays <= 7 ? 'text-amber-500' : 'text-slate-400'
-                              }`}>
-                                {isOverdue ? `${Math.abs(diffDays)} days overdue` : `${diffDays} days left`}
+                              <div
+                                className={`text-[10px] font-semibold ${
+                                  isOverdue
+                                    ? "text-rose-500"
+                                    : diffDays <= 7
+                                      ? "text-amber-500"
+                                      : "text-slate-400"
+                                }`}
+                              >
+                                {isOverdue
+                                  ? `${Math.abs(diffDays)} days overdue`
+                                  : `${diffDays} days left`}
                               </div>
                             )}
                           </div>
@@ -661,7 +886,10 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                         </div>
                         {meta.initialDeposit > 0 ? (
                           <div className="text-[10px] text-emerald-500 font-medium">
-                            Paid: {formatTZS(meta.initialDeposit + meta.repaymentsSum)}
+                            Paid:{" "}
+                            {formatTZS(
+                              meta.initialDeposit + meta.repaymentsSum,
+                            )}
                           </div>
                         ) : null}
                       </td>
@@ -670,12 +898,14 @@ export const DebtAnalytics: React.FC<DebtAnalyticsProps> = ({
                         <span
                           className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
                             isOverdue
-                              ? 'bg-rose-500/10 text-rose-500 border-rose-500/30'
-                              : 'bg-amber-500/10 text-amber-500 border-amber-500/30'
+                              ? "bg-rose-500/10 text-rose-500 border-rose-500/30"
+                              : "bg-amber-500/10 text-amber-500 border-amber-500/30"
                           }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${isOverdue ? 'bg-rose-500' : 'bg-amber-500'}`} />
-                          {isOverdue ? 'Overdue' : 'Active'}
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${isOverdue ? "bg-rose-500" : "bg-amber-500"}`}
+                          />
+                          {isOverdue ? "Overdue" : "Active"}
                         </span>
                       </td>
 

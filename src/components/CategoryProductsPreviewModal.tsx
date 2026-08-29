@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 import {
   X,
   Search,
@@ -26,9 +26,9 @@ import {
   List,
   Filter,
   Building2,
-  DollarSign
-} from 'lucide-react';
-import { CategoryItem, Product } from '../types';
+  DollarSign,
+} from "lucide-react";
+import { CategoryItem, Product } from "../types";
 
 interface CategoryProductsPreviewModalProps {
   isOpen: boolean;
@@ -43,11 +43,22 @@ interface CategoryProductsPreviewModalProps {
   onDuplicateProduct?: (product: Product) => void;
   onAddNewProductInCategory: (categoryName: string) => void;
   isDark: boolean;
-  showConfirm?: (title: string, message: string, onConfirm: () => void, type?: 'confirm' | 'warning') => void;
-  showAlert?: (title: string, message: string, type?: 'alert' | 'error' | 'warning') => void;
+  showConfirm?: (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+    type?: "confirm" | "warning",
+  ) => void;
+  showAlert?: (
+    title: string,
+    message: string,
+    type?: "alert" | "error" | "warning",
+  ) => void;
 }
 
-export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModalProps> = ({
+export const CategoryProductsPreviewModal: React.FC<
+  CategoryProductsPreviewModalProps
+> = ({
   isOpen,
   onClose,
   category,
@@ -63,17 +74,21 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
   showConfirm,
   showAlert,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [stockFilter, setStockFilter] = useState<'all' | 'inStock' | 'lowStock' | 'outOfStock' | 'onOffer'>('all');
-  const [selectedBrand, setSelectedBrand] = useState<string>('All');
-  const [sortBy, setSortBy] = useState<'name' | 'priceAsc' | 'priceDesc' | 'stockAsc' | 'stockDesc' | 'margin'>('name');
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [stockFilter, setStockFilter] = useState<
+    "all" | "inStock" | "lowStock" | "outOfStock" | "onOffer"
+  >("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>("All");
+  const [sortBy, setSortBy] = useState<
+    "name" | "priceAsc" | "priceDesc" | "stockAsc" | "stockDesc" | "margin"
+  >("name");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+
   // Quick inline edit tracking
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
-  const [tempPrice, setTempPrice] = useState<string>('');
+  const [tempPrice, setTempPrice] = useState<string>("");
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
-  const [tempStock, setTempStock] = useState<string>('');
+  const [tempStock, setTempStock] = useState<string>("");
   const [savingProductId, setSavingProductId] = useState<string | null>(null);
   const [savedSuccessId, setSavedSuccessId] = useState<string | null>(null);
 
@@ -81,23 +96,28 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   const formatTZS = (val: number) => {
-    return new Intl.NumberFormat('en-TZ', {
-      style: 'currency',
-      currency: 'TZS',
+    return new Intl.NumberFormat("en-TZ", {
+      style: "currency",
+      currency: "TZS",
       maximumFractionDigits: 0,
     }).format(val || 0);
   };
 
-  const safeConfirm = (title: string, message: string, onConfirm: () => void, type?: 'confirm' | 'warning') => {
+  const safeConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+    type?: "confirm" | "warning",
+  ) => {
     if (showConfirm) {
       showConfirm(title, message, onConfirm, type);
     } else if (window.confirm(message)) {
@@ -108,9 +128,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
   // Get products strictly belonging to this category
   const categoryProducts = useMemo(() => {
     if (!category) return [];
-    const catNameLower = (category.name || '').toLowerCase().trim();
+    const catNameLower = (category.name || "").toLowerCase().trim();
     return (products || []).filter((p) => {
-      const pCat = (p.category || '').toLowerCase().trim();
+      const pCat = (p.category || "").toLowerCase().trim();
       return pCat === catNameLower;
     });
   }, [category, products]);
@@ -183,26 +203,47 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
   // Filtered and sorted products
   const filteredProducts = useMemo(() => {
-    const q = String(searchQuery || "").toLowerCase().trim();
+    const q = String(searchQuery || "")
+      .toLowerCase()
+      .trim();
     let list = categoryProducts.filter((p) => {
       const matchesSearch =
         !q ||
-        (p.name && String(p.name || "").toLowerCase().includes(q)) ||
-        (p.brand && String(p.brand || "").toLowerCase().includes(q)) ||
-        (p.sku && String(p.sku || "").toLowerCase().includes(q)) ||
-        (p.barcode && String(p.barcode || "").toLowerCase().includes(q)) ||
-        (p.description && String(p.description || "").toLowerCase().includes(q));
+        (p.name &&
+          String(p.name || "")
+            .toLowerCase()
+            .includes(q)) ||
+        (p.brand &&
+          String(p.brand || "")
+            .toLowerCase()
+            .includes(q)) ||
+        (p.sku &&
+          String(p.sku || "")
+            .toLowerCase()
+            .includes(q)) ||
+        (p.barcode &&
+          String(p.barcode || "")
+            .toLowerCase()
+            .includes(q)) ||
+        (p.description &&
+          String(p.description || "")
+            .toLowerCase()
+            .includes(q));
 
       const stock = p.stock ?? p.stockCount ?? 0;
       const minAlert = p.minStockAlert ?? 3;
 
       let matchesStock = true;
-      if (stockFilter === 'inStock') matchesStock = stock > 0;
-      else if (stockFilter === 'lowStock') matchesStock = stock > 0 && stock <= minAlert;
-      else if (stockFilter === 'outOfStock') matchesStock = stock <= 0;
-      else if (stockFilter === 'onOffer') matchesStock = !!p.isOnOffer;
+      if (stockFilter === "inStock") matchesStock = stock > 0;
+      else if (stockFilter === "lowStock")
+        matchesStock = stock > 0 && stock <= minAlert;
+      else if (stockFilter === "outOfStock") matchesStock = stock <= 0;
+      else if (stockFilter === "onOffer") matchesStock = !!p.isOnOffer;
 
-      const matchesBrand = selectedBrand === 'All' || (p.brand || '').trim().toLowerCase() === String(selectedBrand || "").toLowerCase();
+      const matchesBrand =
+        selectedBrand === "All" ||
+        (p.brand || "").trim().toLowerCase() ===
+          String(selectedBrand || "").toLowerCase();
 
       return matchesSearch && matchesStock && matchesBrand;
     });
@@ -214,12 +255,12 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       const priceA = a.price || 0;
       const priceB = b.price || 0;
 
-      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '');
-      if (sortBy === 'priceAsc') return priceA - priceB;
-      if (sortBy === 'priceDesc') return priceB - priceA;
-      if (sortBy === 'stockAsc') return stockA - stockB;
-      if (sortBy === 'stockDesc') return stockB - stockA;
-      if (sortBy === 'margin') {
+      if (sortBy === "name") return (a.name || "").localeCompare(b.name || "");
+      if (sortBy === "priceAsc") return priceA - priceB;
+      if (sortBy === "priceDesc") return priceB - priceA;
+      if (sortBy === "stockAsc") return stockA - stockB;
+      if (sortBy === "stockDesc") return stockB - stockA;
+      if (sortBy === "margin") {
         const marginA = priceA - (a.costPrice || 0);
         const marginB = priceB - (b.costPrice || 0);
         return marginB - marginA;
@@ -249,7 +290,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       setSavedSuccessId(product.id);
       setTimeout(() => setSavedSuccessId(null), 1500);
     } catch (err) {
-      console.error('Failed to update stock:', err);
+      console.error("Failed to update stock:", err);
     } finally {
       setSavingProductId(null);
     }
@@ -273,7 +314,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       setSavedSuccessId(product.id);
       setTimeout(() => setSavedSuccessId(null), 1500);
     } catch (err) {
-      console.error('Failed to save stock:', err);
+      console.error("Failed to save stock:", err);
     } finally {
       setSavingProductId(null);
       setEditingStockId(null);
@@ -296,7 +337,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       setSavedSuccessId(product.id);
       setTimeout(() => setSavedSuccessId(null), 1500);
     } catch (err) {
-      console.error('Failed to save price:', err);
+      console.error("Failed to save price:", err);
     } finally {
       setSavingProductId(null);
       setEditingPriceId(null);
@@ -310,33 +351,41 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       await onUpdateProduct({
         ...product,
         isOnOffer: newOfferState,
-        offerTitle: newOfferState ? (product.offerTitle || 'SPECIAL OFFER') : undefined,
+        offerTitle: newOfferState
+          ? product.offerTitle || "SPECIAL OFFER"
+          : undefined,
       });
       setSavedSuccessId(product.id);
       setTimeout(() => setSavedSuccessId(null), 1500);
     } catch (err) {
-      console.error('Failed to toggle offer:', err);
+      console.error("Failed to toggle offer:", err);
     } finally {
       setSavingProductId(null);
     }
   };
 
-  const cardBg = isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200';
-  const textTitle = isDark ? 'text-white' : 'text-slate-900';
-  const textSub = isDark ? 'text-slate-400' : 'text-slate-500';
-  const inputBg = isDark ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500' : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400';
+  const cardBg = isDark
+    ? "bg-slate-900 border-slate-800"
+    : "bg-white border-slate-200";
+  const textTitle = isDark ? "text-white" : "text-slate-900";
+  const textSub = isDark ? "text-slate-400" : "text-slate-500";
+  const inputBg = isDark
+    ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+    : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400";
 
   return (
     <div
       id="category-products-preview-fullscreen-page"
       className={`fixed inset-0 z-50 w-screen h-screen flex flex-col overflow-hidden animate-in fade-in duration-150 ${
-        isDark ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-900'
+        isDark ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-900"
       }`}
     >
       {/* Top Main Navigation Bar with prominent Back <= button */}
       <header
         className={`px-4 sm:px-6 py-3 border-b flex items-center justify-between gap-4 shrink-0 shadow-sm z-20 ${
-          isDark ? 'bg-slate-900/95 border-slate-800/90 backdrop-blur-md' : 'bg-white/95 border-slate-200 backdrop-blur-md'
+          isDark
+            ? "bg-slate-900/95 border-slate-800/90 backdrop-blur-md"
+            : "bg-white/95 border-slate-200 backdrop-blur-md"
         }`}
       >
         {/* Left Side: Back Navigation Button & Category Identity */}
@@ -347,8 +396,8 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             onClick={onClose}
             className={`p-2 sm:p-2.5 rounded-2xl border transition-all duration-150 shadow-sm group active:scale-95 flex items-center justify-center shrink-0 ${
               isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-100 border-slate-700 hover:border-slate-600'
-                : 'bg-slate-50 hover:bg-slate-200 text-slate-800 border-slate-300 hover:border-slate-400'
+                ? "bg-slate-800 hover:bg-slate-700 text-slate-100 border-slate-700 hover:border-slate-600"
+                : "bg-slate-50 hover:bg-slate-200 text-slate-800 border-slate-300 hover:border-slate-400"
             }`}
             title="Back to Categories (Esc)"
           >
@@ -360,13 +409,23 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <select
               value={category.id}
               onChange={(e) => {
-                const selected = categories.find(c => c.id === e.target.value);
+                const selected = categories.find(
+                  (c) => c.id === e.target.value,
+                );
                 if (selected && onSelectCategory) onSelectCategory(selected);
               }}
               className={`text-sm font-bold bg-transparent border-none outline-none cursor-pointer focus:ring-0 hover:opacity-80 transition-opacity ${textTitle}`}
             >
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id} className={isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-900'}>
+              {categories.map((cat) => (
+                <option
+                  key={cat.id}
+                  value={cat.id}
+                  className={
+                    isDark
+                      ? "bg-slate-800 text-white"
+                      : "bg-white text-slate-900"
+                  }
+                >
                   {cat.name}
                 </option>
               ))}
@@ -391,7 +450,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <h1 className={`text-sm sm:text-base font-black tracking-tight truncate ${textTitle}`}>
+                <h1
+                  className={`text-sm sm:text-base font-black tracking-tight truncate ${textTitle}`}
+                >
                   {category.name}
                 </h1>
                 {category.swahiliName && (
@@ -410,16 +471,20 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
         {/* Right Side: View Mode Toggles & Action Buttons */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Grid vs Table View Mode Switcher */}
-          <div className={`p-1 rounded-xl border flex items-center gap-1 ${
-            isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100 border-slate-300'
-          }`}>
+          <div
+            className={`p-1 rounded-xl border flex items-center gap-1 ${
+              isDark
+                ? "bg-slate-800/80 border-slate-700"
+                : "bg-slate-100 border-slate-300"
+            }`}
+          >
             <button
               type="button"
-              onClick={() => setViewMode('grid')}
+              onClick={() => setViewMode("grid")}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                viewMode === 'grid'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                viewMode === "grid"
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
               }`}
               title="Grid View (Spacious Cards)"
             >
@@ -428,11 +493,11 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             </button>
             <button
               type="button"
-              onClick={() => setViewMode('table')}
+              onClick={() => setViewMode("table")}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                viewMode === 'table'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                viewMode === "table"
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
               }`}
               title="Dense Table View (High-volume inventory list)"
             >
@@ -460,7 +525,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       {/* Financial & Inventory Valuation KPI Bar */}
       <div
         className={`px-4 sm:px-6 py-2.5 border-b grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 shrink-0 ${
-          isDark ? 'bg-slate-900/60 border-slate-800/80' : 'bg-slate-50 border-slate-200'
+          isDark
+            ? "bg-slate-900/60 border-slate-800/80"
+            : "bg-slate-50 border-slate-200"
         }`}
       >
         <div className="p-2.5 rounded-xl border bg-white/70 dark:bg-slate-900/80 dark:border-slate-800/80 flex items-center gap-2.5 shadow-sm">
@@ -468,7 +535,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <Package className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Items</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Total Items
+            </span>
             <span className="text-xs sm:text-sm font-black text-blue-600 dark:text-blue-400 truncate block">
               {categoryStats.total} ({categoryStats.totalStockUnits} Units)
             </span>
@@ -480,7 +549,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">In Stock</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              In Stock
+            </span>
             <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 truncate block">
               {categoryStats.inStockCount} SKUs Available
             </span>
@@ -492,9 +563,12 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <AlertTriangle className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Low / Out Alerts</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Low / Out Alerts
+            </span>
             <span className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 truncate block">
-              {categoryStats.lowStockCount} Low • {categoryStats.outOfStockCount} Out
+              {categoryStats.lowStockCount} Low •{" "}
+              {categoryStats.outOfStockCount} Out
             </span>
           </div>
         </div>
@@ -504,7 +578,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <TrendingUp className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Retail Inventory Value</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Retail Inventory Value
+            </span>
             <span className="text-xs sm:text-sm font-black text-purple-600 dark:text-purple-400 truncate block">
               {formatTZS(categoryStats.totalRetailValuation)}
             </span>
@@ -516,7 +592,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <Tag className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Wholesale Cost Value</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Wholesale Cost Value
+            </span>
             <span className="text-xs sm:text-sm font-black text-slate-600 dark:text-slate-300 truncate block">
               {formatTZS(categoryStats.totalCostValuation)}
             </span>
@@ -528,9 +606,15 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             <Flame className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Deals & Est GPM</span>
-            <span className="text-xs sm:text-sm font-black text-rose-600 dark:text-rose-400 truncate block" title="Average Gross Profit Margin for this category">
-              {categoryStats.onOfferCount} Deals • ~{categoryStats.avgMarginPercent}% GPM
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Deals & Est GPM
+            </span>
+            <span
+              className="text-xs sm:text-sm font-black text-rose-600 dark:text-rose-400 truncate block"
+              title="Average Gross Profit Margin for this category"
+            >
+              {categoryStats.onOfferCount} Deals • ~
+              {categoryStats.avgMarginPercent}% GPM
             </span>
           </div>
         </div>
@@ -539,7 +623,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       {/* Filter, Multi-field Search, Brand, and Sorting Toolbar */}
       <div
         className={`px-4 sm:px-6 py-3 border-b flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shrink-0 ${
-          isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          isDark
+            ? "bg-slate-900/90 border-slate-800"
+            : "bg-white border-slate-200"
         }`}
       >
         {/* Search Input */}
@@ -556,7 +642,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
           {searchQuery && (
             <button
               type="button"
-              onClick={() => setSearchQuery('')}
+              onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               <X className="w-3.5 h-3.5" />
@@ -568,13 +654,13 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
         <div className="flex items-center gap-1.5 flex-wrap overflow-x-auto pb-1 md:pb-0">
           <button
             type="button"
-            onClick={() => setStockFilter('all')}
+            onClick={() => setStockFilter("all")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              stockFilter === 'all'
-                ? 'bg-blue-600 text-white shadow-sm'
+              stockFilter === "all"
+                ? "bg-blue-600 text-white shadow-sm"
                 : isDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             All ({categoryProducts.length})
@@ -582,13 +668,13 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
           <button
             type="button"
-            onClick={() => setStockFilter('inStock')}
+            onClick={() => setStockFilter("inStock")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              stockFilter === 'inStock'
-                ? 'bg-emerald-600 text-white shadow-sm'
+              stockFilter === "inStock"
+                ? "bg-emerald-600 text-white shadow-sm"
                 : isDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             In Stock ({categoryStats.inStockCount})
@@ -596,13 +682,13 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
           <button
             type="button"
-            onClick={() => setStockFilter('lowStock')}
+            onClick={() => setStockFilter("lowStock")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              stockFilter === 'lowStock'
-                ? 'bg-amber-600 text-white shadow-sm'
+              stockFilter === "lowStock"
+                ? "bg-amber-600 text-white shadow-sm"
                 : isDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             Low Stock ({categoryStats.lowStockCount})
@@ -610,13 +696,13 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
           <button
             type="button"
-            onClick={() => setStockFilter('outOfStock')}
+            onClick={() => setStockFilter("outOfStock")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              stockFilter === 'outOfStock'
-                ? 'bg-rose-600 text-white shadow-sm'
+              stockFilter === "outOfStock"
+                ? "bg-rose-600 text-white shadow-sm"
                 : isDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             Out of Stock ({categoryStats.outOfStockCount})
@@ -624,13 +710,13 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
           <button
             type="button"
-            onClick={() => setStockFilter('onOffer')}
+            onClick={() => setStockFilter("onOffer")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              stockFilter === 'onOffer'
-                ? 'bg-purple-600 text-white shadow-sm'
+              stockFilter === "onOffer"
+                ? "bg-purple-600 text-white shadow-sm"
                 : isDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             🔥 Deals ({categoryStats.onOfferCount})
@@ -680,17 +766,21 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       {/* Main Spacious Products Inventory Viewport */}
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
         {filteredProducts.length === 0 ? (
-          <div className={`p-16 rounded-3xl border text-center shadow-sm max-w-2xl mx-auto my-12 ${cardBg}`}>
+          <div
+            className={`p-16 rounded-3xl border text-center shadow-sm max-w-2xl mx-auto my-12 ${cardBg}`}
+          >
             <Package className="w-20 h-20 text-slate-400 mx-auto mb-4 opacity-40 animate-pulse" />
             <h3 className={`text-lg font-black ${textTitle}`}>
               {categoryProducts.length === 0
                 ? `No products saved in "${category.name}" yet.`
-                : 'No products match your search or filter.'}
+                : "No products match your search or filter."}
             </h3>
-            <p className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${textSub}`}>
+            <p
+              className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${textSub}`}
+            >
               {categoryProducts.length === 0
                 ? 'Click "Add Product Here" to upload your first electronics unit directly into this category.'
-                : 'Try resetting your search query, adjusting brand selection, or switching stock filter tabs.'}
+                : "Try resetting your search query, adjusting brand selection, or switching stock filter tabs."}
             </p>
             {categoryProducts.length === 0 ? (
               <button
@@ -705,9 +795,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
               <button
                 type="button"
                 onClick={() => {
-                  setSearchQuery('');
-                  setStockFilter('all');
-                  setSelectedBrand('All');
+                  setSearchQuery("");
+                  setStockFilter("all");
+                  setSelectedBrand("All");
                 }}
                 className="mt-6 px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all"
               >
@@ -715,7 +805,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
               </button>
             )}
           </div>
-        ) : viewMode === 'grid' ? (
+        ) : viewMode === "grid" ? (
           /* Grid View - Large Responsive Cards */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
             {filteredProducts.map((product) => {
@@ -733,9 +823,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                   ? Math.round(((retailPrice - costPrice) / retailPrice) * 100)
                   : null;
 
-              const cleanDesc = (product.description || '')
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\s+/g, ' ')
+              const cleanDesc = (product.description || "")
+                .replace(/<[^>]+>/g, " ")
+                .replace(/\s+/g, " ")
                 .trim();
 
               return (
@@ -763,7 +853,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                       ) : (
                         <div className="flex flex-col items-center justify-center text-slate-400">
                           <Package className="w-10 h-10 mb-1 opacity-50" />
-                          <span className="text-[10px] font-semibold">No Image</span>
+                          <span className="text-[10px] font-semibold">
+                            No Image
+                          </span>
                         </div>
                       )}
 
@@ -788,17 +880,17 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                         <span
                           className={`text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm backdrop-blur-md ${
                             isOutOfStock
-                              ? 'bg-rose-600 text-white'
+                              ? "bg-rose-600 text-white"
                               : isLowStock
-                              ? 'bg-amber-500 text-slate-950'
-                              : 'bg-emerald-600 text-white'
+                                ? "bg-amber-500 text-slate-950"
+                                : "bg-emerald-600 text-white"
                           }`}
                         >
                           {isOutOfStock
-                            ? 'Out of Stock'
+                            ? "Out of Stock"
                             : isLowStock
-                            ? `Low: ${stock} left`
-                            : `${stock} in Stock`}
+                              ? `Low: ${stock} left`
+                              : `${stock} in Stock`}
                         </span>
                       </div>
                     </div>
@@ -821,7 +913,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                       {/* Pricing & Margin info */}
                       <div className="p-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60 space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-slate-500 uppercase">Selling Price</span>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase">
+                            Selling Price
+                          </span>
                           {editingPriceId === product.id ? (
                             <div className="flex items-center gap-1">
                               <input
@@ -829,8 +923,10 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                                 value={tempPrice}
                                 onChange={(e) => setTempPrice(e.target.value)}
                                 onKeyDown={(e) => {
-                                  if (e.key === 'Enter') handleSaveInlinePrice(product);
-                                  if (e.key === 'Escape') setEditingPriceId(null);
+                                  if (e.key === "Enter")
+                                    handleSaveInlinePrice(product);
+                                  if (e.key === "Escape")
+                                    setEditingPriceId(null);
                                 }}
                                 autoFocus
                                 className="w-24 px-1.5 py-0.5 text-xs font-black rounded bg-white dark:bg-slate-900 border border-blue-500 text-blue-600 dark:text-blue-400 focus:outline-none"
@@ -865,7 +961,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                             <span>Cost: {formatTZS(costPrice)}</span>
                             {profitMarginPct !== null && (
                               <span
-                                className={`font-extrabold cursor-help ${profitMarginPct >= 20 ? 'text-emerald-500' : 'text-amber-500'}`}
+                                className={`font-extrabold cursor-help ${profitMarginPct >= 20 ? "text-emerald-500" : "text-amber-500"}`}
                                 title={`Gross Profit Margin (GPM): +${profitMarginPct}%\nCalculated as: (Selling Price - Cost Price) / Selling Price`}
                               >
                                 +{profitMarginPct}% GPM
@@ -877,7 +973,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
 
                       {/* Specs / Description snippet */}
                       {cleanDesc && (
-                        <p className={`text-[10px] line-clamp-1 leading-relaxed ${textSub}`}>
+                        <p
+                          className={`text-[10px] line-clamp-1 leading-relaxed ${textSub}`}
+                        >
                           {cleanDesc}
                         </p>
                       )}
@@ -909,8 +1007,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                             value={tempStock}
                             onChange={(e) => setTempStock(e.target.value)}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') handleSaveInlineStock(product);
-                              if (e.key === 'Escape') setEditingStockId(null);
+                              if (e.key === "Enter")
+                                handleSaveInlineStock(product);
+                              if (e.key === "Escape") setEditingStockId(null);
                             }}
                             onBlur={() => handleSaveInlineStock(product)}
                             autoFocus
@@ -925,10 +1024,10 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                             }}
                             className={`w-12 h-7 rounded-lg font-black text-xs flex items-center justify-center border transition-colors ${
                               isOutOfStock
-                                ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 border-rose-200 dark:border-rose-900'
+                                ? "bg-rose-50 dark:bg-rose-950/40 text-rose-600 border-rose-200 dark:border-rose-900"
                                 : isLowStock
-                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-200 dark:border-amber-900'
-                                : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                  ? "bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-200 dark:border-amber-900"
+                                  : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
                             }`}
                             title="Click to type exact stock quantity"
                           >
@@ -953,19 +1052,22 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                         onClick={() => handleToggleOffer(product)}
                         className={`px-2 py-1 rounded-lg text-[10px] font-extrabold flex items-center gap-1 transition-all ${
                           product.isOnOffer
-                            ? 'bg-rose-600 text-white shadow-sm'
-                            : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-rose-500'
+                            ? "bg-rose-600 text-white shadow-sm"
+                            : "bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-rose-500"
                         }`}
-                        title={product.isOnOffer ? 'Disable Offer' : 'Enable Special Offer'}
+                        title={
+                          product.isOnOffer
+                            ? "Disable Offer"
+                            : "Enable Special Offer"
+                        }
                       >
                         <Flame className="w-2.5 h-2.5" />
-                        <span>{product.isOnOffer ? 'Active' : 'Offer'}</span>
+                        <span>{product.isOnOffer ? "Active" : "Offer"}</span>
                       </button>
                     </div>
 
                     {/* Primary Button Toolbar */}
                     <div className="flex items-center justify-between gap-1.5 pt-1">
-                      
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -977,7 +1079,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                         <Copy className="w-3.5 h-3.5" />
                         <span>Duplicate</span>
                       </button>
-<button
+                      <button
                         type="button"
                         onClick={() => {
                           onClose();
@@ -995,12 +1097,12 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                           type="button"
                           onClick={() => {
                             safeConfirm(
-                              'Delete Product',
+                              "Delete Product",
                               `Are you sure you want to delete "${product.name}" from category "${category.name}"?`,
                               async () => {
                                 await onDeleteProduct(product.id);
                               },
-                              'warning'
+                              "warning",
                             );
                           }}
                           className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-500 hover:text-white transition-all active:scale-95"
@@ -1017,12 +1119,18 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
           </div>
         ) : (
           /* Table View - High Density Data Rows */
-          <div className={`rounded-2xl border overflow-hidden shadow-sm ${cardBg}`}>
+          <div
+            className={`rounded-2xl border overflow-hidden shadow-sm ${cardBg}`}
+          >
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className={`border-b font-extrabold uppercase tracking-wider text-[10px] ${
-                  isDark ? 'bg-slate-900/80 text-slate-400 border-slate-800' : 'bg-slate-100 text-slate-500 border-slate-200'
-                }`}>
+                <thead
+                  className={`border-b font-extrabold uppercase tracking-wider text-[10px] ${
+                    isDark
+                      ? "bg-slate-900/80 text-slate-400 border-slate-800"
+                      : "bg-slate-100 text-slate-500 border-slate-200"
+                  }`}
+                >
                   <tr>
                     <th className="p-3">Product / SKU</th>
                     <th className="p-3">Brand</th>
@@ -1046,28 +1154,41 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                     const retailPrice = product.price || 0;
                     const profitMarginPct =
                       retailPrice > 0 && costPrice > 0
-                        ? Math.round(((retailPrice - costPrice) / retailPrice) * 100)
+                        ? Math.round(
+                            ((retailPrice - costPrice) / retailPrice) * 100,
+                          )
                         : null;
 
                     return (
-                      <tr key={product.id} className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                      <tr
+                        key={product.id}
+                        className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                      >
                         {/* Image & Name & SKU */}
                         <td className="p-3">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl border p-1 shrink-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:6px_6px] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] dark:border-slate-700 flex items-center justify-center overflow-hidden">
                               {product.image ? (
-                                <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-full h-full object-contain"
+                                />
                               ) : (
                                 <Package className="w-5 h-5 text-slate-400" />
                               )}
                             </div>
                             <div className="min-w-0">
-                              <span className={`font-bold block leading-snug line-clamp-1 ${textTitle}`}>
+                              <span
+                                className={`font-bold block leading-snug line-clamp-1 ${textTitle}`}
+                              >
                                 {product.name}
                               </span>
                               <div className="flex items-center gap-2 text-[10px] text-slate-400 font-semibold mt-0.5">
                                 {product.sku && <span>SKU: {product.sku}</span>}
-                                {product.barcode && <span>• {product.barcode}</span>}
+                                {product.barcode && (
+                                  <span>• {product.barcode}</span>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -1080,7 +1201,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                               {product.brand}
                             </span>
                           ) : (
-                            <span className="text-slate-400 italic text-[11px]">—</span>
+                            <span className="text-slate-400 italic text-[11px]">
+                              —
+                            </span>
                           )}
                         </td>
 
@@ -1093,8 +1216,10 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                                 value={tempPrice}
                                 onChange={(e) => setTempPrice(e.target.value)}
                                 onKeyDown={(e) => {
-                                  if (e.key === 'Enter') handleSaveInlinePrice(product);
-                                  if (e.key === 'Escape') setEditingPriceId(null);
+                                  if (e.key === "Enter")
+                                    handleSaveInlinePrice(product);
+                                  if (e.key === "Escape")
+                                    setEditingPriceId(null);
                                 }}
                                 autoFocus
                                 className="w-24 px-1.5 py-0.5 text-xs font-black rounded bg-white dark:bg-slate-900 border border-blue-500 text-blue-600 dark:text-blue-400 focus:outline-none"
@@ -1132,7 +1257,7 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                               </span>
                               {profitMarginPct !== null && (
                                 <span
-                                  className={`text-[10px] font-extrabold cursor-help ${profitMarginPct >= 20 ? 'text-emerald-500' : 'text-amber-500'}`}
+                                  className={`text-[10px] font-extrabold cursor-help ${profitMarginPct >= 20 ? "text-emerald-500" : "text-amber-500"}`}
                                   title={`Gross Profit Margin (GPM): +${profitMarginPct}%`}
                                 >
                                   +{profitMarginPct}% GPM
@@ -1140,7 +1265,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                               )}
                             </div>
                           ) : (
-                            <span className="text-slate-400 text-[11px] italic">Not set</span>
+                            <span className="text-slate-400 text-[11px] italic">
+                              Not set
+                            </span>
                           )}
                         </td>
 
@@ -1150,7 +1277,9 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                             <button
                               type="button"
                               disabled={isSaving || stock <= 0}
-                              onClick={() => handleQuickStockChange(product, -1)}
+                              onClick={() =>
+                                handleQuickStockChange(product, -1)
+                              }
                               className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-300 font-black text-xs flex items-center justify-center disabled:opacity-30"
                             >
                               -
@@ -1162,8 +1291,10 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                                 value={tempStock}
                                 onChange={(e) => setTempStock(e.target.value)}
                                 onKeyDown={(e) => {
-                                  if (e.key === 'Enter') handleSaveInlineStock(product);
-                                  if (e.key === 'Escape') setEditingStockId(null);
+                                  if (e.key === "Enter")
+                                    handleSaveInlineStock(product);
+                                  if (e.key === "Escape")
+                                    setEditingStockId(null);
                                 }}
                                 onBlur={() => handleSaveInlineStock(product)}
                                 autoFocus
@@ -1198,13 +1329,17 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                               isOutOfStock
-                                ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
                                 : isLowStock
-                                ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                  ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                  : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                             }`}
                           >
-                            {isOutOfStock ? 'Out of Stock' : isLowStock ? 'Low Stock' : 'In Stock'}
+                            {isOutOfStock
+                              ? "Out of Stock"
+                              : isLowStock
+                                ? "Low Stock"
+                                : "In Stock"}
                           </span>
                         </td>
 
@@ -1215,12 +1350,14 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                             onClick={() => handleToggleOffer(product)}
                             className={`px-2 py-1 rounded-lg text-[10px] font-extrabold inline-flex items-center gap-1 transition-all ${
                               product.isOnOffer
-                                ? 'bg-rose-600 text-white shadow-sm'
-                                : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-rose-500'
+                                ? "bg-rose-600 text-white shadow-sm"
+                                : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-rose-500"
                             }`}
                           >
                             <Flame className="w-2.5 h-2.5" />
-                            <span>{product.isOnOffer ? 'Active Deal' : 'No Deal'}</span>
+                            <span>
+                              {product.isOnOffer ? "Active Deal" : "No Deal"}
+                            </span>
                           </button>
                         </td>
 
@@ -1258,12 +1395,12 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
                                 type="button"
                                 onClick={() => {
                                   safeConfirm(
-                                    'Delete Product',
+                                    "Delete Product",
                                     `Are you sure you want to delete "${product.name}"?`,
                                     async () => {
                                       await onDeleteProduct(product.id);
                                     },
-                                    'warning'
+                                    "warning",
                                   );
                                 }}
                                 className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-600 text-rose-500 hover:text-white transition-all"
@@ -1287,17 +1424,26 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
       {/* Bottom Sticky Status Bar */}
       <footer
         className={`px-4 sm:px-6 py-3 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 shadow-lg z-20 ${
-          isDark ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+          isDark
+            ? "bg-slate-900 border-slate-800 text-slate-300"
+            : "bg-white border-slate-200 text-slate-700"
         }`}
       >
         <div className="flex items-center gap-2 text-xs">
-          <span>Showing <strong>{filteredProducts.length}</strong> of <strong>{categoryProducts.length}</strong> products</span>
+          <span>
+            Showing <strong>{filteredProducts.length}</strong> of{" "}
+            <strong>{categoryProducts.length}</strong> products
+          </span>
           <span>•</span>
-          <span>Category: <strong className={textTitle}>{category.name}</strong></span>
+          <span>
+            Category: <strong className={textTitle}>{category.name}</strong>
+          </span>
           {categoryBrands.length > 0 && (
             <>
               <span>•</span>
-              <span className="text-slate-400">{categoryBrands.length} Brands represented</span>
+              <span className="text-slate-400">
+                {categoryBrands.length} Brands represented
+              </span>
             </>
           )}
         </div>
@@ -1317,8 +1463,8 @@ export const CategoryProductsPreviewModal: React.FC<CategoryProductsPreviewModal
             onClick={onClose}
             className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 active:scale-95 ${
               isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                ? "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700"
+                : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
             }`}
           >
             <ArrowLeft className="w-3.5 h-3.5 text-blue-500" />

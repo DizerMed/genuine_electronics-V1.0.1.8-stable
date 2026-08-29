@@ -1,5 +1,11 @@
-import React from 'react';
-import { CheckCircle2, Info, List, Table as TableIcon, Sparkles } from 'lucide-react';
+import React from "react";
+import {
+  CheckCircle2,
+  Info,
+  List,
+  Table as TableIcon,
+  Sparkles,
+} from "lucide-react";
 
 interface ProductDescriptionViewProps {
   description?: string;
@@ -13,9 +19,9 @@ interface ProductDescriptionViewProps {
  * Rich HTML format, structured list with headers, or plain text.
  */
 export const ProductDescriptionView: React.FC<ProductDescriptionViewProps> = ({
-  description = '',
+  description = "",
   specs,
-  className = '',
+  className = "",
   showCardWrapper = false,
 }) => {
   if (!description && (!specs || Object.keys(specs).length === 0)) {
@@ -26,19 +32,22 @@ export const ProductDescriptionView: React.FC<ProductDescriptionViewProps> = ({
     );
   }
 
-  const rawDesc = (description || '').trim();
+  const rawDesc = (description || "").trim();
 
   // Check if description is formatted HTML
   const isHtml = /<[a-z][\s\S]*>/i.test(rawDesc);
 
   // Check if description is a Markdown / structured Table with pipe syntax or [Section] headers
-  const isMarkdownTable = rawDesc.includes('|') && rawDesc.includes('\n');
-  const hasSectionHeaders = /^\[.+\]/m.test(rawDesc) || /^###?\s+/m.test(rawDesc);
+  const isMarkdownTable = rawDesc.includes("|") && rawDesc.includes("\n");
+  const hasSectionHeaders =
+    /^\[.+\]/m.test(rawDesc) || /^###?\s+/m.test(rawDesc);
 
   // If HTML format, safely render with refined styling
   if (isHtml) {
     return (
-      <div className={`product-description-formatted space-y-4 text-slate-700 dark:text-slate-200 text-sm sm:text-base leading-relaxed ${className}`}>
+      <div
+        className={`product-description-formatted space-y-4 text-slate-700 dark:text-slate-200 text-sm sm:text-base leading-relaxed ${className}`}
+      >
         <div
           className="prose prose-slate dark:prose-invert max-w-none 
             [&_h2]:text-base [&_h2]:sm:text-lg [&_h2]:font-bold [&_h2]:text-slate-900 [&_h2]:dark:text-white [&_h2]:mt-4 [&_h2]:mb-2 [&_h2]:border-b [&_h2]:border-slate-200 [&_h2]:dark:border-slate-800 [&_h2]:pb-1.5
@@ -66,29 +75,39 @@ export const ProductDescriptionView: React.FC<ProductDescriptionViewProps> = ({
   }
 
   // Standard multi-line or bullet format
-  const lines = rawDesc.split('\n').filter(l => l.trim().length > 0);
-  const isBulletList = lines.every(l => /^[•\-\*\d\.\)\:]/.test(l.trim()));
+  const lines = rawDesc.split("\n").filter((l) => l.trim().length > 0);
+  const isBulletList = lines.every((l) => /^[•\-\*\d\.\)\:]/.test(l.trim()));
 
   if (isBulletList) {
     return (
       <div className={`space-y-2 text-sm sm:text-base ${className}`}>
         {lines.map((line, idx) => {
-          const clean = line.replace(/^[•\-\*\d\.\)\:]\s*/, '').trim();
-          const hasColon = clean.includes(':');
+          const clean = line.replace(/^[•\-\*\d\.\)\:]\s*/, "").trim();
+          const hasColon = clean.includes(":");
           if (hasColon) {
-            const [label, ...valParts] = clean.split(':');
+            const [label, ...valParts] = clean.split(":");
             return (
-              <div key={idx} className="flex items-start gap-2.5 bg-slate-50/60 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60">
+              <div
+                key={idx}
+                className="flex items-start gap-2.5 bg-slate-50/60 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60"
+              >
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                 <div className="text-xs sm:text-sm">
-                  <span className="font-bold text-slate-900 dark:text-white">{label.trim()}: </span>
-                  <span className="text-slate-600 dark:text-slate-300">{valParts.join(':').trim()}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">
+                    {label.trim()}:{" "}
+                  </span>
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {valParts.join(":").trim()}
+                  </span>
                 </div>
               </div>
             );
           }
           return (
-            <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+            <div
+              key={idx}
+              className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
               <span>{clean}</span>
             </div>
@@ -100,8 +119,10 @@ export const ProductDescriptionView: React.FC<ProductDescriptionViewProps> = ({
 
   // Plain paragraphs
   return (
-    <div className={`space-y-3 text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed ${className}`}>
-      {rawDesc.split('\n\n').map((paragraph, idx) => (
+    <div
+      className={`space-y-3 text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed ${className}`}
+    >
+      {rawDesc.split("\n\n").map((paragraph, idx) => (
         <p key={idx}>{paragraph}</p>
       ))}
     </div>
@@ -109,11 +130,21 @@ export const ProductDescriptionView: React.FC<ProductDescriptionViewProps> = ({
 };
 
 function renderStructuredSections(content: string, className: string) {
-  const lines = content.split('\n');
-  const sections: { title?: string; type: 'table' | 'text'; rows: { key: string; val: string }[]; text: string[] }[] = [];
-  
-  let currentSection: { title?: string; type: 'table' | 'text'; rows: { key: string; val: string }[]; text: string[] } = {
-    type: 'text',
+  const lines = content.split("\n");
+  const sections: {
+    title?: string;
+    type: "table" | "text";
+    rows: { key: string; val: string }[];
+    text: string[];
+  }[] = [];
+
+  let currentSection: {
+    title?: string;
+    type: "table" | "text";
+    rows: { key: string; val: string }[];
+    text: string[];
+  } = {
+    type: "text",
     rows: [],
     text: [],
   };
@@ -123,14 +154,15 @@ function renderStructuredSections(content: string, className: string) {
     if (!line) continue;
 
     // Header match: [Header Name] or ### Header Name
-    const headerMatch = line.match(/^\[(.*?)\]$/) || line.match(/^###?\s+(.*)$/);
+    const headerMatch =
+      line.match(/^\[(.*?)\]$/) || line.match(/^###?\s+(.*)$/);
     if (headerMatch) {
       if (currentSection.rows.length > 0 || currentSection.text.length > 0) {
         sections.push(currentSection);
       }
       currentSection = {
         title: headerMatch[1].trim(),
-        type: 'text',
+        type: "text",
         rows: [],
         text: [],
       };
@@ -138,33 +170,39 @@ function renderStructuredSections(content: string, className: string) {
     }
 
     // Table line match: | Key | Value | or Key : Value or Key \t Value
-    if (line.includes('|')) {
-      const parts = line.split('|').map(p => p.trim()).filter(Boolean);
-      if (parts.length >= 2 && !parts[0].startsWith('---')) {
-        currentSection.type = 'table';
+    if (line.includes("|")) {
+      const parts = line
+        .split("|")
+        .map((p) => p.trim())
+        .filter(Boolean);
+      if (parts.length >= 2 && !parts[0].startsWith("---")) {
+        currentSection.type = "table";
         currentSection.rows.push({
           key: parts[0],
-          val: parts.slice(1).join(' | '),
+          val: parts.slice(1).join(" | "),
         });
         continue;
       }
-    } else if (line.includes('\t')) {
-      const parts = line.split('\t').map(p => p.trim()).filter(Boolean);
+    } else if (line.includes("\t")) {
+      const parts = line
+        .split("\t")
+        .map((p) => p.trim())
+        .filter(Boolean);
       if (parts.length >= 2) {
-        currentSection.type = 'table';
+        currentSection.type = "table";
         currentSection.rows.push({
           key: parts[0],
-          val: parts.slice(1).join(' '),
+          val: parts.slice(1).join(" "),
         });
         continue;
       }
-    } else if (line.includes(':') && !line.startsWith('http')) {
-      const [k, ...v] = line.split(':');
+    } else if (line.includes(":") && !line.startsWith("http")) {
+      const [k, ...v] = line.split(":");
       if (k.length < 50) {
-        currentSection.type = 'table';
+        currentSection.type = "table";
         currentSection.rows.push({
           key: k.trim(),
-          val: v.join(':').trim(),
+          val: v.join(":").trim(),
         });
         continue;
       }
@@ -197,11 +235,17 @@ function renderStructuredSections(content: string, className: string) {
                   <div
                     key={rIdx}
                     className={`grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-4 sm:py-3 text-xs sm:text-sm gap-1 sm:gap-4 transition-colors ${
-                      rIdx % 2 === 0 ? 'bg-slate-50/50 dark:bg-slate-900/30' : 'bg-white dark:bg-slate-900/70'
+                      rIdx % 2 === 0
+                        ? "bg-slate-50/50 dark:bg-slate-900/30"
+                        : "bg-white dark:bg-slate-900/70"
                     }`}
                   >
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{r.key}</span>
-                    <span className="sm:col-span-2 font-bold text-slate-900 dark:text-white">{r.val}</span>
+                    <span className="font-semibold text-slate-500 dark:text-slate-400">
+                      {r.key}
+                    </span>
+                    <span className="sm:col-span-2 font-bold text-slate-900 dark:text-white">
+                      {r.val}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -226,7 +270,7 @@ function renderStructuredSections(content: string, className: string) {
  */
 function sanitizeBasicHtml(html: string): string {
   return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/g, '')
-    .replace(/javascript:/gi, '');
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/on\w+="[^"]*"/g, "")
+    .replace(/javascript:/gi, "");
 }

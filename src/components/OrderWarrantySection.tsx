@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  ShieldAlert, 
-  Clock, 
-  Calendar, 
-  ChevronDown, 
-  ChevronUp, 
-  Wrench, 
-  MessageCircle, 
-  CheckCircle2, 
-  AlertTriangle 
-} from 'lucide-react';
-import { OrderItem, StoreSettings } from '../types';
-import { calculateWarrantyStatus, WarrantyStatus } from '../utils/warranty';
-import { triggerHaptic } from '../utils/haptics';
+import React, { useState } from "react";
+import {
+  ShieldCheck,
+  ShieldAlert,
+  Clock,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Wrench,
+  MessageCircle,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
+import { OrderItem, StoreSettings } from "../types";
+import { calculateWarrantyStatus, WarrantyStatus } from "../utils/warranty";
+import { triggerHaptic } from "../utils/haptics";
 
 interface OrderWarrantySectionProps {
   items: OrderItem[];
@@ -30,7 +30,7 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
   orderId,
   customerName,
   storeSettings,
-  defaultExpanded = false
+  defaultExpanded = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
@@ -39,7 +39,7 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
   // Calculate warranty for each item
   const itemWarranties = items.map((it) => ({
     item: it,
-    status: calculateWarrantyStatus(purchaseDate, it.product?.warranty)
+    status: calculateWarrantyStatus(purchaseDate, it.product?.warranty),
   }));
 
   // Overall summary for this order
@@ -48,19 +48,22 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
   const activeCount = itemWarranties.filter((w) => !w.status.isExpired).length;
 
   const handleClaimWarranty = (item: OrderItem, status: WarrantyStatus) => {
-    triggerHaptic('light');
-    const storePhone = (storeSettings?.phone || '255777000000').replace(/[^0-9+]/g, '');
+    triggerHaptic("light");
+    const storePhone = (storeSettings?.phone || "255777000000").replace(
+      /[^0-9+]/g,
+      "",
+    );
     let cleanPhone = storePhone;
-    if (cleanPhone.startsWith('0')) cleanPhone = '255' + cleanPhone.slice(1);
-    if (cleanPhone.startsWith('+')) cleanPhone = cleanPhone.slice(1);
+    if (cleanPhone.startsWith("0")) cleanPhone = "255" + cleanPhone.slice(1);
+    if (cleanPhone.startsWith("+")) cleanPhone = cleanPhone.slice(1);
 
-    const message = 
+    const message =
       `*🛡️ GENUINE ELECTRONICS WARRANTY SERVICE CLAIM*\n` +
       `----------------------------------------\n` +
       `🆔 *Order ID:* ${orderId}\n` +
-      `👤 *Customer:* ${customerName || 'Valued Customer'}\n` +
+      `👤 *Customer:* ${customerName || "Valued Customer"}\n` +
       `📦 *Product:* ${item.product?.name}\n` +
-      `🏷️ *SKU / Model:* ${item.product?.sku || 'N/A'}\n` +
+      `🏷️ *SKU / Model:* ${item.product?.sku || "N/A"}\n` +
       `📅 *Purchase Date:* ${status.purchaseDateFormatted}\n` +
       `⏳ *Warranty Term:* ${status.term}\n` +
       `🛡️ *Warranty Expiry:* ${status.expiryDateFormatted}\n` +
@@ -69,7 +72,7 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
       `Hello, I would like to request technical support or warranty assistance for this item.`;
 
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
   return (
@@ -78,20 +81,26 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
       <button
         type="button"
         onClick={() => {
-          triggerHaptic('light');
+          triggerHaptic("light");
           setIsExpanded(!isExpanded);
         }}
         className="w-full px-3.5 py-2.5 flex items-center justify-between gap-3 text-left hover:bg-blue-100/50 dark:hover:bg-blue-900/30 transition-colors"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <div className={`p-1.5 rounded-lg shrink-0 ${
-            allExpired 
-              ? 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' 
-              : anyExpiringSoon 
-                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300' 
-                : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300'
-          }`}>
-            {allExpired ? <ShieldAlert className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+          <div
+            className={`p-1.5 rounded-lg shrink-0 ${
+              allExpired
+                ? "bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                : anyExpiringSoon
+                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300"
+                  : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300"
+            }`}
+          >
+            {allExpired ? (
+              <ShieldAlert className="w-3.5 h-3.5" />
+            ) : (
+              <ShieldCheck className="w-3.5 h-3.5" />
+            )}
           </div>
           <div className="min-w-0">
             <span className="font-extrabold text-slate-800 dark:text-slate-200">
@@ -130,27 +139,30 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
         <div className="p-3 pt-1 space-y-2.5 border-t border-blue-100 dark:border-blue-900/30">
           {itemWarranties.map(({ item, status }, index) => {
             const statusBadgeClasses = status.isExpired
-              ? 'bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+              ? "bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
               : status.isExpiringSoon
-                ? 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700'
-                : 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800';
+                ? "bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700"
+                : "bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800";
 
             const progressBarColor = status.isExpired
-              ? 'bg-slate-400'
+              ? "bg-slate-400"
               : status.isExpiringSoon
-                ? 'bg-amber-500'
-                : 'bg-emerald-500';
+                ? "bg-amber-500"
+                : "bg-emerald-500";
 
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 space-y-2.5 shadow-xs"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <img
-                      src={item.product?.image || 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=200'}
-                      alt={item.product?.name || 'Product'}
+                      src={
+                        item.product?.image ||
+                        "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=200"
+                      }
+                      alt={item.product?.name || "Product"}
                       className="w-9 h-9 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                     />
                     <div className="min-w-0">
@@ -158,13 +170,18 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
                         {item.product?.name}
                       </p>
                       <p className="text-[10px] text-slate-400">
-                        Term: <span className="font-medium text-slate-600 dark:text-slate-300">{status.term}</span>
+                        Term:{" "}
+                        <span className="font-medium text-slate-600 dark:text-slate-300">
+                          {status.term}
+                        </span>
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusBadgeClasses}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusBadgeClasses}`}
+                    >
                       {status.statusLabel}
                     </span>
                   </div>
@@ -183,24 +200,30 @@ export const OrderWarrantySection: React.FC<OrderWarrantySectionProps> = ({
 
                   <div>
                     <span className="text-[9px] uppercase font-bold text-slate-400 flex items-center gap-1">
-                      <ShieldCheck className="w-2.5 h-2.5 text-blue-500" /> Expiration Date
+                      <ShieldCheck className="w-2.5 h-2.5 text-blue-500" />{" "}
+                      Expiration Date
                     </span>
-                    <p className={`font-bold mt-0.5 ${status.isExpired ? 'text-rose-500' : 'text-slate-900 dark:text-white'}`}>
+                    <p
+                      className={`font-bold mt-0.5 ${status.isExpired ? "text-rose-500" : "text-slate-900 dark:text-white"}`}
+                    >
                       {status.expiryDateFormatted}
                     </p>
                   </div>
 
                   <div className="col-span-2 sm:col-span-1">
                     <span className="text-[9px] uppercase font-bold text-slate-400 flex items-center gap-1">
-                      <Clock className="w-2.5 h-2.5 text-indigo-500" /> Remaining Time
+                      <Clock className="w-2.5 h-2.5 text-indigo-500" />{" "}
+                      Remaining Time
                     </span>
-                    <p className={`font-extrabold mt-0.5 ${
-                      status.isExpired 
-                        ? 'text-slate-400' 
-                        : status.isExpiringSoon 
-                          ? 'text-amber-600 dark:text-amber-400' 
-                          : 'text-emerald-600 dark:text-emerald-400'
-                    }`}>
+                    <p
+                      className={`font-extrabold mt-0.5 ${
+                        status.isExpired
+                          ? "text-slate-400"
+                          : status.isExpiringSoon
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-emerald-600 dark:text-emerald-400"
+                      }`}
+                    >
                       {status.remainingText}
                     </p>
                   </div>

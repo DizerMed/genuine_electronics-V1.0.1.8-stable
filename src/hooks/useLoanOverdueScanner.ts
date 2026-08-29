@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { POSTransaction } from '../types';
-import { 
-  scanOverdueLoansList, 
-  OverdueLoanItem, 
-  playLoanAlertChime, 
-  buildLoanNotificationCopy 
-} from '../lib/loanOverdueWorker';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { POSTransaction } from "../types";
+import {
+  scanOverdueLoansList,
+  OverdueLoanItem,
+  playLoanAlertChime,
+  buildLoanNotificationCopy,
+} from "../lib/loanOverdueWorker";
 
 export interface UseLoanOverdueScannerResult {
   overdueLoans: OverdueLoanItem[];
@@ -21,11 +21,14 @@ export interface UseLoanOverdueScannerResult {
 
 export function useLoanOverdueScanner(
   posTransactions: POSTransaction[],
-  intervalMs: number = 30000 // default scan every 30s
+  intervalMs: number = 30000, // default scan every 30s
 ): UseLoanOverdueScannerResult {
   const [overdueLoans, setOverdueLoans] = useState<OverdueLoanItem[]>([]);
-  const [activeToastLoan, setActiveToastLoan] = useState<OverdueLoanItem | null>(null);
-  const [selectedRepayTxId, setSelectedRepayTxId] = useState<string | null>(null);
+  const [activeToastLoan, setActiveToastLoan] =
+    useState<OverdueLoanItem | null>(null);
+  const [selectedRepayTxId, setSelectedRepayTxId] = useState<string | null>(
+    null,
+  );
   const [isRepayModalOpen, setIsRepayModalOpen] = useState(false);
 
   // Keep track of which overdue loans have already triggered a notification chime in this session
@@ -38,20 +41,26 @@ export function useLoanOverdueScanner(
 
     if (list.length > 0) {
       // Find the first overdue loan that has not yet triggered an audible chime or toast in the current cycle
-      const unnotified = list.find(item => !notifiedIdsRef.current.has(item.id));
+      const unnotified = list.find(
+        (item) => !notifiedIdsRef.current.has(item.id),
+      );
       if (unnotified) {
         notifiedIdsRef.current.add(unnotified.id);
         setActiveToastLoan(unnotified);
         playLoanAlertChime();
 
         // If browser notifications are permitted, show native system notification as well
-        if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        if (
+          typeof window !== "undefined" &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
           try {
             const copy = buildLoanNotificationCopy(unnotified);
             new Notification(copy.headline, {
               body: copy.body,
-              icon: '/vite.svg',
-              tag: `overdue-loan-${unnotified.id}`
+              icon: "/vite.svg",
+              tag: `overdue-loan-${unnotified.id}`,
             });
           } catch (e) {
             // ignore notification constructor failure in unsupported environments
@@ -65,7 +74,11 @@ export function useLoanOverdueScanner(
 
   // Request browser notification permission once on mount if possible
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "default"
+    ) {
       try {
         Notification.requestPermission().catch(() => {});
       } catch (e) {}
@@ -106,6 +119,6 @@ export function useLoanOverdueScanner(
     setSelectedRepayTxId,
     isRepayModalOpen,
     setIsRepayModalOpen,
-    openRepayModalForTx
+    openRepayModalForTx,
   };
 }

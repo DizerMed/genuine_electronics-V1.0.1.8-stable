@@ -12,11 +12,12 @@ const sw = {
     contact: "Mawasiliano",
     cart: "Kikapu",
     language: "Lugha",
-    profile: "Profaili"
+    profile: "Profaili",
   },
   shop: {
     heroTitle: "Vifaa bora vya Kielectroniki Nyumbani",
-    heroSubtitle: "Nunua vifaa halisi vipya na vyenye udhamini kwa usafirishaji nchi nzima.",
+    heroSubtitle:
+      "Nunua vifaa halisi vipya na vyenye udhamini kwa usafirishaji nchi nzima.",
     shopNow: "Nunua Sasa",
     viewDeals: "Angalia Ofa",
     freeShipping: "Usafirishaji Bure",
@@ -32,10 +33,10 @@ const sw = {
     notifyMe: "Nijulishe",
     contactSellerForEnquiry: "Wasiliana na Muuzaji kwa Maelezo",
     addToCart: "Weka Kikapuni",
-    outOfStock: "Imeisha Stoo"
+    outOfStock: "Imeisha Stoo",
   },
   categories: {
-    "All": "Zote",
+    All: "Zote",
     "Computers & Tablets": "Kompyuta na Vishikwambi",
     "Phones & Wearables": "Simu na Vifaa Vinavyovaliwa",
     "Audio & Headphones": "Sauti na Vipokea sauti",
@@ -49,23 +50,26 @@ const sw = {
     "Air Conditioners & Cooling": "Makondishona na Vipoaji",
     "Refrigeration & Freezers": "Majokofu na Mafriza",
     "Kitchen Cooking & Ovens": "Vyombo vya Jikoni na Oveni",
-    "Home Cleaning & Laundry": "Usafishaji na Kufulia"
+    "Home Cleaning & Laundry": "Usafishaji na Kufulia",
   },
   checkout: {
-    requiredFieldsError: "Tafadhali jaza maelezo yote ya usafirishaji na mawasiliano yanayohitajika kabla ya kuendelea."
+    requiredFieldsError:
+      "Tafadhali jaza maelezo yote ya usafirishaji na mawasiliano yanayohitajika kabla ya kuendelea.",
   },
   footer: {
     brandName: "GENUINE ELECTRONICS TRUST",
     brandSubtitle: "Kituo cha Ununuzi Mtandaoni",
-    description: "Kituo kilichoidhinishwa cha ununuzi mtandaoni nchini Tanzania kwa teknolojia halisi ya walaji na biashara 100%. Dhamana za moja kwa moja kutoka kwa watengenezaji, ubora halisi uliothibitishwa, na utoaji wa haraka na kuchukua bidhaa Dar es Salaam.",
+    description:
+      "Kituo kilichoidhinishwa cha ununuzi mtandaoni nchini Tanzania kwa teknolojia halisi ya walaji na biashara 100%. Dhamana za moja kwa moja kutoka kwa watengenezaji, ubora halisi uliothibitishwa, na utoaji wa haraka na kuchukua bidhaa Dar es Salaam.",
     topCategories: "Aina Maarufu",
     customerCare: "Huduma kwa Wateja",
     visitContact: "Tembelea na Wasiliana",
     privacyPolicy: "Sera ya Faragha",
     termsOfService: "Sheria na Masharti",
     authenticityGuarantee: "Dhamana ya Ubora",
-    copyright: "© 2026 Genuine Electronics Trust Tanzania Ltd. Haki zote zimehifadhiwa. • Kituo Kilichoidhinishwa cha Ununuzi Mtandaoni"
-  }
+    copyright:
+      "© 2026 Genuine Electronics Trust Tanzania Ltd. Haki zote zimehifadhiwa. • Kituo Kilichoidhinishwa cha Ununuzi Mtandaoni",
+  },
 };
 
 export default sw;

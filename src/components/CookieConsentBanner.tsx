@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Cookie, Check, ShieldCheck, Settings2, X } from 'lucide-react';
-import { getCookieConsentStatus, setCookieConsentStatus, CookieConsentLevel } from '../lib/visitorTrackingService';
+import React, { useState, useEffect } from "react";
+import { Cookie, Check, ShieldCheck, Settings2, X } from "lucide-react";
+import {
+  getCookieConsentStatus,
+  setCookieConsentStatus,
+  CookieConsentLevel,
+} from "../lib/visitorTrackingService";
 
 export const CookieConsentBanner: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -20,23 +24,23 @@ export const CookieConsentBanner: React.FC = () => {
   if (!visible) return null;
 
   const handleAcceptAll = () => {
-    setCookieConsentStatus('all');
+    setCookieConsentStatus("all");
     setVisible(false);
   };
 
   const handleAcceptEssential = () => {
-    setCookieConsentStatus('essential');
+    setCookieConsentStatus("essential");
     setVisible(false);
   };
 
   const handleSaveCustom = () => {
-    setCookieConsentStatus(analyticsEnabled ? 'all' : 'essential');
+    setCookieConsentStatus(analyticsEnabled ? "all" : "essential");
     setVisible(false);
   };
 
   return (
-    <div 
-      id="buydil-cookie-banner" 
+    <div
+      id="buydil-cookie-banner"
       className="fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300"
     >
       <div className="bg-slate-900/95 text-white backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-2xl p-4 sm:p-5">
@@ -51,7 +55,9 @@ export const CookieConsentBanner: React.FC = () => {
                   <span>Cookie &amp; Privacy Preferences</span>
                 </h4>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  We use cookies and anonymous local storage to remember your cart, keep your session active, and optimize store loading speed. No personal tracking or third-party ads.
+                  We use cookies and anonymous local storage to remember your
+                  cart, keep your session active, and optimize store loading
+                  speed. No personal tracking or third-party ads.
                 </p>
               </div>
             </div>
@@ -92,7 +98,9 @@ export const CookieConsentBanner: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span className="text-xs font-black text-white">Customize Cookie Choices</span>
+                <span className="text-xs font-black text-white">
+                  Customize Cookie Choices
+                </span>
               </div>
               <button
                 type="button"
@@ -109,17 +117,26 @@ export const CookieConsentBanner: React.FC = () => {
                 <div>
                   <div className="font-bold text-white flex items-center gap-1.5">
                     <span>Strictly Necessary</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Always Active</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                      Always Active
+                    </span>
                   </div>
-                  <div className="text-[11px] text-slate-400">Cart, currency preference, secure checkout authentication.</div>
+                  <div className="text-[11px] text-slate-400">
+                    Cart, currency preference, secure checkout authentication.
+                  </div>
                 </div>
               </div>
 
               {/* Performance & Analytics */}
               <div className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                 <div className="pr-2">
-                  <div className="font-bold text-white">Store Analytics &amp; Performance</div>
-                  <div className="text-[11px] text-slate-400">Anonymous visitor counts, heatmap load balancing, search suggestions.</div>
+                  <div className="font-bold text-white">
+                    Store Analytics &amp; Performance
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Anonymous visitor counts, heatmap load balancing, search
+                    suggestions.
+                  </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input

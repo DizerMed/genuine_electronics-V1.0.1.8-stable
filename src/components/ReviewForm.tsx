@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import React, { useState } from "react";
+import { Star } from "lucide-react";
 
 interface ReviewFormProps {
   productId: string;
@@ -7,9 +7,13 @@ interface ReviewFormProps {
   onSubmit: (review: { rating: number; comment: string }) => void;
 }
 
-export const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onClose, onSubmit }) => {
+export const ReviewForm: React.FC<ReviewFormProps> = ({
+  productId,
+  onClose,
+  onSubmit,
+}) => {
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +28,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onClose, onSu
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+            className={`w-6 h-6 cursor-pointer ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
             onClick={() => setRating(star)}
           />
         ))}
@@ -37,8 +41,19 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onClose, onSu
         required
       />
       <div className="flex justify-end gap-2">
-        <button type="button" onClick={onClose} className="px-4 py-2 border rounded">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Submit</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 border rounded"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Submit
+        </button>
       </div>
     </form>
   );

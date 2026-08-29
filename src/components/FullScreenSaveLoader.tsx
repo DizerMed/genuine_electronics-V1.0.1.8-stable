@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Cloud, CloudUpload, Loader2, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import {
+  Cloud,
+  CloudUpload,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 
 export interface FullScreenSaveLoaderProps {
   isVisible: boolean;
@@ -16,7 +23,7 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
   subtitle,
   tableName,
   action,
-  onForceDismiss
+  onForceDismiss,
 }) => {
   const [showFailsafe, setShowFailsafe] = useState(false);
 
@@ -43,48 +50,59 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Prevent ESC or any shortcut from dismissing underlying modals or triggering actions while saving
-      if (e.key === 'Escape' || e.key === 'Tab') {
+      if (e.key === "Escape" || e.key === "Tab") {
         e.preventDefault();
         e.stopPropagation();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown, true);
+    window.addEventListener("keydown", handleKeyDown, true);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown, true);
+      window.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [isVisible]);
 
   if (!isVisible) return null;
 
   // Derive dynamic title & subtitle based on context if not explicitly provided
-  let displayTitle = title || 'Saving & Syncing to Cloud...';
-  let displaySubtitle = subtitle || 'Please wait a moment while your changes are securely saved.';
+  let displayTitle = title || "Saving & Syncing to Cloud...";
+  let displaySubtitle =
+    subtitle || "Please wait a moment while your changes are securely saved.";
 
   if (!title && tableName) {
     const formattedTable = tableName
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, " $1")
+      .replace(/_/g, " ")
       .trim();
 
-    if (tableName === 'pos_transactions' || tableName === 'posTransactions') {
-      displayTitle = action === 'ADD' ? 'Recording POS Sale...' : 'Updating Transaction & Repayments...';
-      displaySubtitle = 'Syncing sales ledger, stock deductions, and cloud records.';
-    } else if (tableName === 'products') {
-      displayTitle = action === 'ADD' ? 'Adding Genuine Product...' : 'Updating Product Catalog...';
-      displaySubtitle = 'Processing specs, pricing, stock levels, and cloud storage.';
-    } else if (tableName === 'categories') {
-      displayTitle = 'Saving Category Details...';
-      displaySubtitle = 'Synchronizing store categories & navigation.';
-    } else if (tableName === 'store_settings' || tableName === 'settings') {
-      displayTitle = 'Publishing Store Settings...';
-      displaySubtitle = 'Broadcasting live configurations globally to all visitors.';
-    } else if (tableName === 'orders') {
-      displayTitle = 'Updating Customer Order...';
-      displaySubtitle = 'Saving delivery status, payment records, and timeline.';
+    if (tableName === "pos_transactions" || tableName === "posTransactions") {
+      displayTitle =
+        action === "ADD"
+          ? "Recording POS Sale..."
+          : "Updating Transaction & Repayments...";
+      displaySubtitle =
+        "Syncing sales ledger, stock deductions, and cloud records.";
+    } else if (tableName === "products") {
+      displayTitle =
+        action === "ADD"
+          ? "Adding Genuine Product..."
+          : "Updating Product Catalog...";
+      displaySubtitle =
+        "Processing specs, pricing, stock levels, and cloud storage.";
+    } else if (tableName === "categories") {
+      displayTitle = "Saving Category Details...";
+      displaySubtitle = "Synchronizing store categories & navigation.";
+    } else if (tableName === "store_settings" || tableName === "settings") {
+      displayTitle = "Publishing Store Settings...";
+      displaySubtitle =
+        "Broadcasting live configurations globally to all visitors.";
+    } else if (tableName === "orders") {
+      displayTitle = "Updating Customer Order...";
+      displaySubtitle =
+        "Saving delivery status, payment records, and timeline.";
     } else {
       displayTitle = `Saving ${formattedTable}...`;
-      displaySubtitle = 'Synchronizing changes directly with Cloud Database.';
+      displaySubtitle = "Synchronizing changes directly with Cloud Database.";
     }
   }
 
@@ -102,7 +120,7 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
       }}
     >
       {/* High-End Glassmorphism Card */}
-      <div 
+      <div
         id="full-screen-save-loader-card"
         className="relative w-full max-w-md bg-slate-900/95 border border-slate-700/80 rounded-3xl p-7 sm:p-8 text-center shadow-2xl shadow-blue-950/50 backdrop-blur-2xl flex flex-col items-center gap-5 animate-in zoom-in-95 duration-200"
       >
@@ -113,7 +131,7 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
         <div className="relative flex items-center justify-center w-20 h-20 shrink-0">
           {/* Outer Pulsing Aura */}
           <div className="absolute inset-0 rounded-full bg-blue-500/15 animate-ping opacity-60 duration-1000" />
-          
+
           {/* Outer Glowing Border Ring */}
           <div className="absolute inset-0 rounded-full border-2 border-blue-500/30 animate-pulse" />
 
@@ -138,10 +156,11 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
 
         {/* Animated Progress Shimmer Bar */}
         <div className="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden relative border border-slate-700/50">
-          <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500 rounded-full animate-[shimmer_1.5s_infinite_linear] [background-size:200%_100%]" 
-               style={{
-                 animation: 'moveBar 1.6s infinite ease-in-out'
-               }}
+          <div
+            className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500 rounded-full animate-[shimmer_1.5s_infinite_linear] [background-size:200%_100%]"
+            style={{
+              animation: "moveBar 1.6s infinite ease-in-out",
+            }}
           />
         </div>
 
@@ -177,7 +196,11 @@ export const FullScreenSaveLoader: React.FC<FullScreenSaveLoaderProps> = ({
                 if (onForceDismiss) {
                   onForceDismiss();
                 } else {
-                  window.dispatchEvent(new CustomEvent('supabase-write-end', { detail: { force: true } }));
+                  window.dispatchEvent(
+                    new CustomEvent("supabase-write-end", {
+                      detail: { force: true },
+                    }),
+                  );
                 }
               }}
               className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold rounded-xl border border-slate-600 transition-colors shadow-lg cursor-pointer"
